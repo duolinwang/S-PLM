@@ -49,11 +49,11 @@ accelerate launch train_go.py --config_path configs/mf_config_adapterH_adapterH.
 ```
 #### Training and evaluation for fold classification:
 ```sh
-accelerate launch train_go.py --config_path configs/fold_config_adapterH_finetune.yaml --resume_path model/checkpoint_0520000.pth
+accelerate launch train_fold.py --config_path configs/fold_config_adapterH_finetune.yaml --resume_path model/checkpoint_0520000.pth
 ```
 #### Training and evaluation for secondary structure prediction:
 ```sh
-accelerate launch train_go.py --config_path configs/ss_config_adapterH_finetune.yaml --resume_path model/checkpoint_0520000.pth
+accelerate launch train_ss.py --config_path configs/ss_config_adapterH_finetune.yaml --resume_path model/checkpoint_0520000.pth
 ```
 
 
