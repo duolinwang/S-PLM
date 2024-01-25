@@ -1,0 +1,74 @@
+fix_seed: 0
+checkpoints_every: 128
+tensorboard_log: True
+result_path: /mnt/pixstor/dbllab/negin/ptm/result_enzyme_reaction/SPLM_ER 
+
+resume:
+  enable: True
+  resume_path: /mnt/pixstor/dbllab/duolin/simCLR/Qing swin codes/adapterH_tuneall_16esm2_gitcosine100lr001_out256_pool2/checkpoint_0105105.pth.tar
+  restart_optimizer: True
+
+encoder:
+  model_name:  facebook/esm2_t33_650M_UR50D # facebook/esm2_t33_650M_UR50D, facebook/esm2_t30_150M_UR50D, facebook/esm2_t12_35M_UR50D, facebook/esm2_t6_8M_UR50D, Rostlab/prot_t5_base_mt_uniref50
+  max_len: 512
+  tune_embedding: False
+  adapter_h:
+    enable: True
+    num_end_adapter_layers: 16
+    module_type: "MLP1"
+    freeze_adapter_layers: True
+  fine_tune:
+    enable: False
+    last_layers_trainable: 6
+    freeze_adapter_layers: True
+  lora:
+    enable: False
+    r: 8
+    lora_alpha: 32
+    lora_dropout: 0.05
+  num_classes: 384
+  head_dropout: 0.2
+  mlp_hidden_dim: 250
+  mlp_layer_num: 1
+
+train_settings:
+  data_path: /mnt/pixstor/dbllab/negin/SPLM_Data/Enzyme_Reaction_data/train.csv
+  num_epochs: 80
+  shuffle: True
+  loss: focal # crossentropy or focal
+  sample_weight: False
+  mixed_precision: fp16 # no, fp16, bf16, fp8
+  device: cuda
+  batch_size: 64
+  num_workers: 0
+  grad_accumulation: 1
+
+valid_settings:
+  data_path: /mnt/pixstor/dbllab/negin/SPLM_Data/Enzyme_Reaction_data/validation.csv
+  do_every: 1
+  batch_size: 128
+  device: cuda
+  num_workers: 0
+
+test_settings:
+  data_path: /mnt/pixstor/dbllab/negin/SPLM_Data/Enzyme_Reaction_data/test.csv
+  batch_size: 128
+  device: cuda
+  num_workers: 0
+
+optimizer:
+  name: adam
+  lr: 0.001
+  weight_decouple: True
+  weight_decay: 0.0005
+  eps: 1e-16
+  beta_1: 0.9
+  beta_2: 0.999
+  use_8bit_adam: False
+  grad_clip_norm: 1
+  decay:
+    warmup: 4
+    min_lr: 0
+    gamma: 1
+    num_restarts: 1
+    first_cycle_steps: null # null or an integer number (ignore num_restarts)
