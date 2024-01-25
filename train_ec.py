@@ -387,7 +387,7 @@ def main(args, dict_config, config_file_path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Train a multilabel model using esm")
     parser.add_argument("--config_path", "-c", help="The location of config file",
-                        default='./config_enzyme_commission.yaml')
+                        default='./config_ec.yaml')
     parser.add_argument("--result_path", default=None,
                         help="result_path, if setted by command line,"
                              " overwrite the one in config.yaml, by default is None")
