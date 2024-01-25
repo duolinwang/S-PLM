@@ -19,16 +19,23 @@ Using `environment.yml`
 
 ## Run
 ### Using S-PLM for downstream tasks
-To start a new training you have to set the accelerator config by running `accelearte config` in the command line after 
-`cd` to the **merged_tasks** folder.
-By doing that, you can utilize the accelerator power in you training code such as distributed multi GPU training.
+To utilize the accelerator power in you training code such as distributed multi GPU training, you have to set the accelerator config by running `accelearte config` in the command line.
+Then, you have to set the training settings and hyperparameters inside your target task `configs/config_{task}.yaml` file.
+Finally, you can start your training for downstream tasks using a config file from configs and a pretrained [S-PLM model] (https://mailmissouri-my.sharepoint.com/:f:/g/personal/wangdu_umsystem_edu/Evk7BBT5LxRMpsHzKxmi0DEBrgv1mgBK0MRuRHJSqSoHZQ?e=Eozrwh) by running
+`accelerate launch train_{task}.py --config_path configs/<config_name> --resume_path model/checkpoint_0520000.pth`
 
-Then, you have to set the training settings and hyperparameters inside your target task `config_{task}.yaml` file.
-Finally, you can start your training by running
-`accelerate launch train_{task}.py`.
+
+### Examples 
+#### Training and evaluation for GO prediction tasks:
+`accelerate launch train_go.py --config_path configs/bp_config_adapterH_adapterH.yaml --resume_path model/checkpoint_0520000.pth`
+`accelerate launch train_go.py --config_path configs/cc_config_adapterH_adapterH.yaml --resume_path model/checkpoint_0520000.pth`
+`accelerate launch train_go.py --config_path configs/mf_config_adapterH_adapterH.yaml --resume_path model/checkpoint_0520000.pth`
+#### Training and evaluation for fold classification:
+`accelerate launch train_go.py --config_path configs/fold_config_adapterH_finetune.yaml --resume_path model/checkpoint_0520000.pth`
+#### Training and evaluation for secondary structure prediction:
+`accelerate launch train_go.py --config_path configs/ss_config_adapterH_finetune.yaml --resume_path model/checkpoint_0520000.pth`
+
 
 You might not use accelerator to run the `train.py` script if you just want to **debug** your script on single GPU. If so, simply after setting the `config.yaml` file
-run the code by `python train_{task}.py`.
-
-It should be noted that accelerate supports single gpu and distributed training. So, you can use it for your 
+run the code by `python train_{task}.py`. It should be noted that accelerate supports single gpu and distributed training. So, you can use it for your 
 final training.
