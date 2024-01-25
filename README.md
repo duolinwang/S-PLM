@@ -4,18 +4,18 @@ S-PLM: Structure-aware Protein Language Model via Contrastive Learning between S
 ## Installation
 To use S-PLM, please install the required packages as follows:
 
-### using python environment:
+### 1 Use python environment:
 Using `requirements.txt`
 1. Create a python environment: `python3 -m venv <env_name>`.
 2. Activate the environment you have just created: `source <env_name>/bin/activate`.
 3. install dependencies inside it: `pip3 install -r requirements.txt`.
 
-### using conda environment:
+### 2 Use conda environment:
 Using `environment.yml`
 1. Create a new environment using the `environment.yml` file: `conda <env_name> create -f environment.yml`.
 2. Activate the environment you have just created: `conda activate <env_name>`.
 
-Or you can follow the `install.txt` file to manully install each dependency.
+### 3 Follow the `install.txt` file to manually install each dependency.
 
 ## Run
 ### Using S-PLM for downstream tasks
