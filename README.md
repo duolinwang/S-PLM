@@ -9,7 +9,7 @@
 This is the official implementation of S-PLM paper.
 
 ## Installation
-To use S-PLM project, install the corresponding requirements.txt or environment.yml files in your environment. Or you can follow the install.sh file to install the dependencies.
+To use S-PLM project, install the corresponding environment.yaml file in your environment. Or you can follow the install.sh file to install the dependencies.
 
 ### Install using yaml file
 Using `environment.yml`
