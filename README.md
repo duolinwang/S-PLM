@@ -12,8 +12,8 @@ This is the official implementation of S-PLM paper.
 To use S-PLM project, install the corresponding environment.yaml file in your environment. Or you can follow the install.sh file to install the dependencies.
 
 ### Install using yaml file
-Using `environment.yml`
-1. Create a new environment using the `environment.yml` file: `conda env create -f environment.yml`.
+Using `environment.yaml`
+1. Create a new environment using the `environment.yaml` file: `conda env create -f environment.yaml`.
 2. Activate the environment you have just created: `conda activate splm`.
 
 ### Install using SH file
