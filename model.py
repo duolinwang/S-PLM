@@ -10,8 +10,8 @@ from utils import load_configs, get_dummy_logging
 import esm_adapterH
 import esm
 import numpy as np
-
-def verify_data_types(model, logging):
+import copy
+def verify_data_types(model, logging=None):
     # Verifying the datatypes.
     dtypes = {}
     for _, p in model.named_parameters():
@@ -23,7 +23,8 @@ def verify_data_types(model, logging):
     for k, v in dtypes.items():
         total += v
     for k, v in dtypes.items():
-        logging.info(f"{k}, {v}, {v / total}")
+        if logging:
+           logging.info(f"{k}, {v}, {v / total}")
 
 
 def prepare_hf_esm_model(model_name, configs, logging):
@@ -75,7 +76,9 @@ def prepare_hf_esm_model(model_name, configs, logging):
         model = get_peft_model(model, config)
 
         if configs.encoder.quantization_4_bit:
-            logging.info('make embedding parameters trainable because of 4 bit training')
+            if logging:
+                logging.info('make embedding parameters trainable because of 4 bit training')
+            
             for param in model.embeddings.word_embeddings.parameters():
                 param.requires_grad = True
 
@@ -101,7 +104,9 @@ def prepare_hf_esm_model(model_name, configs, logging):
         param.requires_grad = False
 
     if configs.encoder.tune_embedding:
-        logging.info('make embedding parameters trainable')
+        if logging:
+           logging.info('make embedding parameters trainable')
+        
         for param in model.embeddings.word_embeddings.parameters():
             param.requires_grad = True
 
@@ -112,13 +117,16 @@ def prepare_hf_esm_model(model_name, configs, logging):
     return model
 
 
-def prepare_esm_model(configs, logging):
-    logging.info("use ESM model")
+def prepare_esm_model(configs, logging=None):
+    if logging:
+        logging.info("use ESM model")
+    
     model_name = configs.encoder.model_name.split('/')[-1]
 
     # Create the model dynamically using module attributes
     model_constructor = getattr(esm.pretrained, model_name, None)
     model, alphabet = model_constructor()
+    num_layers = model.num_layers
     # Freeze all layers
     for param in model.parameters():
         param.requires_grad = False
@@ -126,11 +134,22 @@ def prepare_esm_model(configs, logging):
         # only freeze all the parameters once at the beginning. then open some layers later
 
     if configs.encoder.lora.enable:
-        logging.info('enable LoRa on top of esm model')
-        target_modules = [
-            "k_proj", "v_proj", "q_proj",
-            "fc1", "fc2"
-        ]
+        if logging:
+           logging.info('enable LoRa on top of esm model')
+        #target_modules = [
+        #    "k_proj", "v_proj", "q_proj","fc1", "fc2"]
+        if hasattr(configs.encoder.lora,"lora_targets"):
+            lora_targets = configs.encoder.lora.lora_targets
+        else:
+            lora_targets = ["self_attn.q_proj", "self_attn.k_proj", "self_attn.v_proj",
+                                   "self_attn.out_proj"]
+        target_modules = []
+        if configs.encoder.lora.esm_num_end_lora > 0:
+            start_layer_idx = np.max([num_layers - configs.encoder.lora.esm_num_end_lora, 0])
+            for idx in range(start_layer_idx, num_layers):
+                for layer_name in lora_targets:
+                    target_modules.append(f"layers.{idx}.{layer_name}")
+        
         config = LoraConfig(
             r=configs.encoder.lora.r,
             lora_alpha=configs.encoder.lora.lora_alpha,
@@ -155,16 +174,19 @@ def prepare_esm_model(configs, logging):
                 param.requires_grad = True
 
     if configs.encoder.tune_embedding:
-        logging.info('make esm embedding parameters trainable')
+        if logging:
+           logging.info('make esm embedding parameters trainable')
+        
         for param in model.embed_tokens.parameters():
             param.requires_grad = True
 
     return model, alphabet
 
 
-def prepare_adapter_h_model(configs, logging):
-    logging.info("use adapterH ESM model")
-
+def prepare_adapter_h_model(configs, logging=None):
+    if logging:
+       logging.info("use adapterH ESM model")
+    
     adapter_args = configs.encoder.adapter_h
     model_name = configs.encoder.model_name.split('/')[-1]
 
@@ -172,10 +194,6 @@ def prepare_adapter_h_model(configs, logging):
     model_constructor = getattr(esm_adapterH.pretrained, model_name, None)
     model, alphabet = model_constructor(adapter_args)
     num_layers = model.num_layers
-    # checkpoint = torch.load(configs.encoder.adapter_h.pretrain_checkpoints, map_location=lambda storage, loc: storage)
-    # logging.info('load the pretrained weights of S-PLM from {configs.encoder.adapter_h.pretrain_checkpoints}')
-    # model.load_state_dict(checkpoint['state_dict1'], strict=False)
-
     # Freeze all layers
     for param in model.parameters():
         param.requires_grad = False
@@ -189,13 +207,18 @@ def prepare_adapter_h_model(configs, logging):
         configs.encoder.fine_tune.freeze_adapter_layers = [configs.encoder.fine_tune.freeze_adapter_layers]
     
     if configs.encoder.lora.enable:
-        logging.info('enable LoRa on top of adapterH model')
+        if logging:
+           logging.info('enable LoRa on top of adapterH model')
+        if hasattr(configs.encoder.lora,"lora_targets"):
+            lora_targets = configs.encoder.lora.lora_targets
+        else:
+            lora_targets = ["self_attn.q_proj", "self_attn.k_proj", "self_attn.v_proj",
+                                   "self_attn.out_proj"]
         target_modules = []
         if configs.encoder.lora.esm_num_end_lora > 0:
             start_layer_idx = np.max([num_layers - configs.encoder.lora.esm_num_end_lora, 0])
             for idx in range(start_layer_idx, num_layers):
-                for layer_name in ["self_attn.q_proj", "self_attn.k_proj", "self_attn.v_proj",
-                                   "self_attn.out_proj"]:
+                for layer_name in lora_targets:
                     target_modules.append(f"layers.{idx}.{layer_name}")
         
         config = LoraConfig(
@@ -316,6 +339,29 @@ class MultiLayerPerceptron(nn.Module):
         hidden = F.softmax(hidden, dim=-1)
         return hidden
 
+class Sequence_representation(nn.Module):
+    def __init__(self, logging, configs):
+        super().__init__()
+        if configs.encoder.adapter_h.enable:
+            self.esm2, self.alphabet = prepare_adapter_h_model(configs, logging)
+        else:
+            self.esm2, self.alphabet = prepare_esm_model(configs, logging)
+        
+        # self.device = device
+        self.configs = configs
+        self.batch_converter = self.alphabet.get_batch_converter(truncation_seq_length=configs.encoder.max_len)
+    
+    def forward(self, x):
+        residue_representation = self.esm2(x, repr_layers=[self.esm2.num_layers], return_contacts=False)['representations'][
+            self.esm2.num_layers]
+        
+        mask = (x != self.alphabet.padding_idx)  # use this in v2 training
+        denom = torch.sum(mask, -1, keepdim=True)
+        protein_representation = torch.sum(residue_representation * mask.unsqueeze(-1), dim=1) / denom  # remove padding
+        
+        return protein_representation,residue_representation
+
+
 
 class Encoder(nn.Module):
     def __init__(self, logging, configs):
@@ -339,6 +385,52 @@ class Encoder(nn.Module):
         classification = self.head(pooled_features)
         return classification
 
+def prepare_configs_mergedESM2(configs):
+        merged_configs = copy.deepcopy(configs)
+        #if has tune_embedding in merge2ESM2 use this specific config, if not, share with original configs
+        if hasattr(configs.encoder.merge2ESM2,"tune_embedding"):
+            merged_configs.encoder.tune_embedding = configs.encoder.merge2ESM2.tune_embedding
+        if hasattr(configs.encoder.merge2ESM2,"fine_tune"):
+           merged_configs.encoder.fine_tune = configs.encoder.merge2ESM2.fine_tune
+        if hasattr(configs.encoder.merge2ESM2,"lora"):
+           merged_configs.encoder.lora = configs.encoder.merge2ESM2.lora
+        if hasattr(configs.encoder.merge2ESM2,"adapter_h"):
+           merged_configs.encoder.adapter_h = configs.encoder.merge2ESM2.adapter_h
+        
+        return merged_configs
+
+class Encoder_merge(nn.Module):
+    def __init__(self, logging, configs):
+        super().__init__()
+        merged_configs=prepare_configs_mergedESM2(configs)
+        if configs.encoder.adapter_h.enable:
+            self.baseesm2, self.alphabet = prepare_esm_model(merged_configs, logging)
+            self.esm2, self.alphabet = prepare_adapter_h_model(configs, logging)
+        elif configs.encoder.adapter_h.enable and configs.encoder.merge2ESM2.adapter_h.enable:
+             #both S-PLM and merged ESM2 use adapter tuning
+             self.baseesm2, self.alphabet = prepare_adapter_h_model(merged_configs, logging)
+             self.esm2, self.alphabet = prepare_adapter_h_model(configs, logging)
+        else:
+            #both merged ESM2 and ESM2 use esm_model
+            self.baseesm2, self.alphabet = prepare_esm_model(merged_configs, logging)
+            self.esm2, self.alphabet = prepare_esm_model(configs, logging)
+        
+        self.head = nn.Linear(self.esm2.embed_dim, configs.encoder.num_classes)
+        self.pooling_layer = nn.AdaptiveAvgPool1d(output_size=1)
+        # self.device = device
+        self.configs = configs
+    
+    def forward(self, x):
+        features1 = self.esm2(x['input_ids'],
+                            repr_layers=[self.esm2.num_layers])['representations'][self.esm2.num_layers]
+        features2 = self.baseesm2(x['input_ids'],
+                            repr_layers=[self.baseesm2.num_layers])['representations'][self.baseesm2.num_layers]
+        
+        features=(features1+features2)/2
+        transposed_feature = features.transpose(1, 2)
+        pooled_features = self.pooling_layer(transposed_feature).squeeze(2)
+        classification = self.head(pooled_features)
+        return classification
 
 class EncoderSSPTM(nn.Module):
     def __init__(self, logging, configs):
@@ -361,9 +453,50 @@ class EncoderSSPTM(nn.Module):
         self.configs = configs
 
     def forward(self, x):
+        #mask = (x != self.alphabet.padding_idx)
         features = self.esm2(x['input_ids'],
                             repr_layers=[self.esm2.num_layers])['representations'][self.esm2.num_layers]
         c = self.mlp(features[:, 1:-1, :])
+        #c = self.mlp(remove_s_e_token(features,mask))
+        return c
+
+
+class EncoderSSPTM_merge(nn.Module):
+    def __init__(self, logging, configs):
+        super().__init__()
+        merged_configs=prepare_configs_mergedESM2(configs)
+        if configs.encoder.adapter_h.enable:
+            self.baseesm2, self.alphabet = prepare_esm_model(merged_configs, logging)
+            self.esm2, self.alphabet = prepare_adapter_h_model(configs, logging)
+        elif configs.encoder.adapter_h.enable and configs.encoder.merge2ESM2.adapter_h.enable:
+             #both S-PLM and merged ESM2 use adapter tuning
+             self.baseesm2, self.alphabet = prepare_adapter_h_model(merged_configs, logging)
+             self.esm2, self.alphabet = prepare_adapter_h_model(configs, logging)
+        else:
+            #both merged ESM2 and ESM2 use esm_model
+            self.baseesm2, self.alphabet = prepare_esm_model(merged_configs, logging)
+            self.esm2, self.alphabet = prepare_esm_model(configs, logging)
+        
+        # extract the embedding size
+        mlp_input_dim = self.esm2.embed_dim
+        
+        mlp_hidden_dim = configs.encoder.mlp_hidden_dim
+        mlp_layer_num = configs.encoder.mlp_layer_num
+        hidden_dims = [mlp_hidden_dim] * (mlp_layer_num - 1)
+        self.mlp = MultiLayerPerceptron(mlp_input_dim, hidden_dims + [configs.encoder.num_classes], batch_norm=False,
+                                        dropout=configs.encoder.head_dropout)
+        
+        # self.device = device
+        self.configs = configs
+
+    def forward(self, x):
+        features1 = self.esm2(x['input_ids'],
+                            repr_layers=[self.esm2.num_layers])['representations'][self.esm2.num_layers]
+        features2 = self.baseesm2(x['input_ids'],
+                            repr_layers=[self.baseesm2.num_layers])['representations'][self.baseesm2.num_layers]
+        
+        c = self.mlp((features1[:, 1:-1, :]+features2[:,1:-1,:])/2) 
+        #1:-1 is just remove start end or last padding. It is fine because we will have a mask tensor with only the effect resiue == 1
         return c
 
 
@@ -420,6 +553,23 @@ def prepare_models(configs, logging):
 
     return encoder
 
+def prepare_models_merge(configs, logging):
+    """
+    Prepare the encoder model.
+
+    Args:
+        configs: A python box object containing the configuration options.
+        logging: The logging object.
+
+    Returns:
+        The encoder model.
+    """
+    # Prepare the encoder.
+    encoder = Encoder_merge(logging=logging, configs=configs)
+    print_trainable_parameters(encoder, logging)
+    logging.info('encoder parameters: ' + str(sum(p.numel() for p in encoder.parameters())))
+
+    return encoder
 
 def prepare_models_secondary_structure_ptm(configs, logging):
     """
@@ -434,6 +584,24 @@ def prepare_models_secondary_structure_ptm(configs, logging):
     """
     # Prepare the encoder.
     encoder = EncoderSSPTM(logging=logging, configs=configs)
+    print_trainable_parameters(encoder, logging)
+    logging.info('encoder parameters: ' + str(sum(p.numel() for p in encoder.parameters())))
+
+    return encoder
+
+def prepare_models_secondary_structure_ptm_merge(configs, logging):
+    """
+    Prepare the encoder model.
+
+    Args:
+        configs: A python box object containing the configuration options.
+        logging: The logging object.
+
+    Returns:
+        The encoder model.
+    """
+    # Prepare the encoder.
+    encoder = EncoderSSPTM_merge(logging=logging, configs=configs)
     print_trainable_parameters(encoder, logging)
     logging.info('encoder parameters: ' + str(sum(p.numel() for p in encoder.parameters())))
 
