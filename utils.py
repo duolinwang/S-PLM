@@ -217,13 +217,17 @@ def load_configs(config, args=None):
 
         if args.resume_path:
             tree_config.resume.resume_path = args.resume_path
-            tree_config.resume.enable = True #if set by args, the resume enable will be overwrite as True
+            #tree_config.resume.enable = True #if set by args, the resume enable will be overwrite as True
         
         if args.num_end_adapter_layers:
             if not isinstance(args.num_end_adapter_layers, list):
-                args.num_end_adapter_layers = [args.num_end_adapter_layers]
-                args.num_end_adapter_layers = [int(x) for x in args.num_end_adapter_layers]
-                tree_config.encoder.adapter_h.num_end_adapter_layers = args.num_end_adapter_layers
+                if "-" in args.num_end_adapter_layers:
+                   args.num_end_adapter_layers = args.num_end_adapter_layers.split("-")
+                else:
+                   args.num_end_adapter_layers = [args.num_end_adapter_layers]
+            
+            args.num_end_adapter_layers = [int(x) for x in args.num_end_adapter_layers]
+            tree_config.encoder.adapter_h.num_end_adapter_layers = args.num_end_adapter_layers
 
         if args.module_type:
             tree_config.encoder.adapter_h.module_type = args.module_type
@@ -318,6 +322,28 @@ def load_opt(model, config, logging):
     else:
         raise ValueError('wrong optimizer')
     return opt, scheduler
+
+
+def load_checkpoints_only(checkpoint_path,  model):
+    model_checkpoint = torch.load(checkpoint_path, map_location='cpu')
+    if 'state_dict1' in model_checkpoint:
+        #to load old checkpoints that saved adapter_layer_dict as adapter_layer. 
+        from collections import OrderedDict
+        if np.sum(["adapter_layer_dict" in key for key in model_checkpoint['state_dict1'].keys()])==0: #using old checkpoints, need to rename the adapter_layer into adapter_layer_dict.adapter_0
+             new_ordered_dict = OrderedDict()
+             for key, value in model_checkpoint['state_dict1'].items():
+                 if "adapter_layer_dict" not in key:
+                   new_key = key.replace('adapter_layer', 'adapter_layer_dict.adapter_0')
+                   new_ordered_dict[new_key] = value
+                 else:
+                   new_ordered_dict[key] = value
+             
+             model.load_state_dict(new_ordered_dict,strict=False)
+        else: #new checkpoints with new code, that can be loaded directly.
+              model.load_state_dict(model_checkpoint['state_dict1'], strict=False)
+    elif 'model_state_dict' in model_checkpoint:
+          model.load_state_dict(model_checkpoint['model_state_dict'], strict=False)
+    
 
 
 def load_checkpoints(configs, optimizer, scheduler, logging, net):
