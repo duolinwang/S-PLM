@@ -339,7 +339,7 @@ class MultiLayerPerceptron(nn.Module):
         hidden = F.softmax(hidden, dim=-1)
         return hidden
 
-class Sequence_representation(nn.Module):
+class SequenceRepresentation(nn.Module):
     def __init__(self, logging, configs):
         super().__init__()
         if configs.encoder.adapter_h.enable:
