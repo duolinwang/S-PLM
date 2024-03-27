@@ -47,7 +47,7 @@ accelerate launch train_go.py --config_path configs/mf_config_adapterH_adapterH.
 ```commandline
 accelerate launch train_fold.py --config_path configs/fold_config_adapterH_finetune.yaml --resume_path model/checkpoint_0520000.pth
 ```
-#### Train and evaluate of secondary structure prediction:
+#### Train and evaluate of secondary structure prediction
 ```commandline
 accelerate launch train_ss.py --config_path configs/ss_config_adapterH_finetune.yaml --resume_path model/checkpoint_0520000.pth
 ```
@@ -57,6 +57,37 @@ You might not use accelerator to run the `train.py` script if you just want to *
 run the code by `python train_{task}.py`. It should be noted that accelerate supports single gpu and distributed training. So, you can use it for your 
 final training.
 
+#### Extract sequence representation
+To extract the protein sequence representation from a pre-trained S-PLM, you can use the `extract_sequence_representation.py`
+similar to the following code:
+
+```python
+    import yaml
+    from utils import load_configs, load_checkpoints_only
+    from model import SequenceRepresentation
+    
+    # Create a list of protein sequences
+    sequences = ["MHHHHHHSSGVDLGTENLYFQSNAMDFPQQLEA", "CVKQANQALSRFIAPLPFQNTPVVE", "TMQYGALLGGKRLR"]
+
+    # Load the configuration file
+    config_path = "./configs/representation_config.yaml"
+    with open(config_path) as file:
+        dict_config = yaml.full_load(file)
+    configs = load_configs(dict_config)
+
+    # Create the model using the configuration file
+    model = SequenceRepresentation(logging=None, configs=configs)
+
+    # Load the S-PLM checkpoint file
+    checkpoint_path = "your checkpoint_path"
+    load_checkpoints_only(checkpoint_path, model)
+
+    esm2_seq = [(range(len(sequences)), str(sequences[i])) for i in range(len(sequences))]
+    batch_labels, batch_strs, batch_tokens = model.batch_converter(esm2_seq)
+    
+    # Get the protein representation and residue representation
+    protein_representation, residue_representation = model(batch_tokens)
+```
 
 ## 📜 Citation
 If you use this code or the pretrained models, please cite the following paper:
