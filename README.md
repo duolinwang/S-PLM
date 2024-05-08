@@ -6,7 +6,9 @@
 
 [![paper](https://img.shields.io/badge/bioRxiv-Paper-<COLOR>.svg)](https://www.biorxiv.org/content/10.1101/2023.08.06.552203v2)
 
-This is the official implementation of S-PLM paper. S-PLM is a protein language model (PLM) designed to incorporate 3D structural information into sequence-based embeddings. This repository offers comprehensive guidance on utilizing pre-trained S-PLM models to generate structure-aware protein representations. Additionally, it provides a library of code for implementing lightweight tuning methods tailored for various downstream supervised learning tasks involving proteins.
+This is the official implementation of S-PLM paper. 
+S-PLM is a 3D structure-aware protein language model (PLM) that enables the sequence-based embedding to carry the structural information through multi-view contrastive learning. 
+This repository offers comprehensive guidance on utilizing pre-trained S-PLM models to generate structure-aware protein representations. Additionally, it provides a library of code for implementing lightweight tuning methods tailored for various downstream supervised learning tasks involving proteins.
 The tasks include Enzyme Commission number (EC) prediction, Gene Ontology (GO) prediction, protein fold (fold) and enzyme reaction (ER) classification, and protein secondary structure (SS) prediction. The lightweight tunning methods include fine-tune top layers, Adapter Tuning, and Low-rank adaptation (LoRA). Users can train a task-specific model using different tuning methods by modifying the configuration files provided in the [configs directory](https://github.com/duolinwang/S-PLM/tree/main/configs)
 
 
