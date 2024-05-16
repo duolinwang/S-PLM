@@ -4,7 +4,7 @@
     <img src="https://i.imgur.com/waxVImv.png" alt="Oryx Video-ChatGPT">
 </p>
 
-[![paper](https://img.shields.io/badge/bioRxiv-Paper-<COLOR>.svg)](https://www.biorxiv.org/content/10.1101/2023.08.06.552203v2)
+[![paper](https://img.shields.io/badge/bioRxiv-Paper-<COLOR>.svg)]([https://www.biorxiv.org/content/10.1101/2023.08.06.552203v3])
 
 This is the official implementation of S-PLM paper. S-PLM is a 3D structure-aware protein language model (PLM) that enables the sequence-based embedding to carry the structural information through multi-view contrastive learning. 
 
