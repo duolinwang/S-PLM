@@ -90,7 +90,7 @@ similar to the following code:
     checkpoint_path = "your checkpoint_path"
     load_checkpoints_only(checkpoint_path, model)
 
-    esm2_seq = [(range(len(sequences)), str(sequences[i])) for i in range(len(sequences))]
+    esm2_seq = [(i, str(sequences[i])) for i in range(len(sequences))]
     batch_labels, batch_strs, batch_tokens = model.batch_converter(esm2_seq)
     
     # Get the protein representation and residue representation
