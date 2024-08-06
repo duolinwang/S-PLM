@@ -85,7 +85,7 @@ similar to the following code:
 
     # Create the model using the configuration file
     model = SequenceRepresentation(logging=None, configs=configs)
-
+    model.eval()
     # Load the S-PLM checkpoint file
     checkpoint_path = "your checkpoint_path"
     load_checkpoints_only(checkpoint_path, model)
