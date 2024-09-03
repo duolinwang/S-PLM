@@ -11,6 +11,9 @@ import esm_adapterH
 import esm
 import numpy as np
 import copy
+
+from esm_adapterH.prompt_tuning import PrefixTuning
+
 def verify_data_types(model, logging=None):
     # Verifying the datatypes.
     dtypes = {}
@@ -172,7 +175,20 @@ def prepare_esm_model(configs, logging=None):
         if configs.encoder.fine_tune.last_layers_trainable != 0:
             for param in model.emb_layer_norm_after.parameters():
                 param.requires_grad = True
-
+    elif hasattr(configs.encoder,"prompt"):
+         
+         if configs.encoder.prompt.enable:
+            if not hasattr(configs.encoder.prompt,"num_tasks"):
+               configs.encoder.prompt.num_tasks = 1
+            
+            model.prefix_module = PrefixTuning(model, prompt_len=configs.encoder.prompt.prompt_len,
+                                prompt_layer_indices=configs.encoder.prompt.prompt_layer_indices,
+                                num_tasks = configs.encoder.prompt.num_tasks
+                                )
+            for param in model.prefix_module.parameters():
+                param.requires_grad = True
+        
+    
     if configs.encoder.tune_embedding:
         if logging:
            logging.info('make esm embedding parameters trainable')
@@ -255,7 +271,6 @@ def prepare_adapter_h_model(configs, logging=None):
             for name, param in model.named_parameters():
                 adapter_name = f"adapter_{adapter_idx}"
                 if adapter_name in name:
-                    # Freeze all parameters by default
                     param.requires_grad = True
     
     # only freeze all the parameters once at the beginning. then open some layers later,but because
@@ -267,10 +282,20 @@ def prepare_adapter_h_model(configs, logging=None):
             for name, param in model.named_parameters():
                 adapter_name = f"adapter_{adapter_idx}"
                 if adapter_name in name:
-                    # Freeze all parameters by default
                     print("freeze adapter in fine-tune")
                     param.requires_grad = False
     #"""
+    if hasattr(configs.encoder,"prompt"):
+      if configs.encoder.prompt.enable:
+        if not hasattr(configs.encoder.prompt,"num_tasks"):
+            configs.encoder.prompt.num_tasks = 1
+        
+        model.prefix_module = PrefixTuning(model, prompt_len=configs.encoder.prompt.prompt_len,
+                                prompt_layer_indices=configs.encoder.prompt.prompt_layer_indices,
+                                num_tasks = configs.encoder.prompt.num_tasks
+                                )
+        for param in model.prefix_module.parameters():
+            param.requires_grad = True
     
     if configs.encoder.tune_embedding:
         for param in model.embed_tokens.parameters():
@@ -342,6 +367,14 @@ class MultiLayerPerceptron(nn.Module):
 class SequenceRepresentation(nn.Module):
     def __init__(self, logging, configs):
         super().__init__()
+        self.merge2ESM2 = False
+        if hasattr(configs.encoder,"merge2ESM2"):
+           if configs.encoder.merge2ESM2.enable:
+              self.merge2ESM2 = True
+        
+        if self.merge2ESM2:
+              self.baseesm2, self.alphabet = prepare_esm_model(configs, logging)
+        
         if configs.encoder.adapter_h.enable:
             self.esm2, self.alphabet = prepare_adapter_h_model(configs, logging)
         else:
@@ -349,19 +382,32 @@ class SequenceRepresentation(nn.Module):
         
         # self.device = device
         self.configs = configs
-        self.batch_converter = self.alphabet.get_batch_converter(truncation_seq_length=configs.encoder.max_len)
+        #self.batch_converter = self.alphabet.get_batch_converter(truncation_seq_length=configs.encoder.max_len)
+        self.batch_converter = self.alphabet.get_batch_converter()
+        self.eval()
     
-    def forward(self, x):
-        residue_representation = self.esm2(x, repr_layers=[self.esm2.num_layers], return_contacts=False)['representations'][
-            self.esm2.num_layers]
-        
-        mask = (x != self.alphabet.padding_idx)  # use this in v2 training
-        denom = torch.sum(mask, -1, keepdim=True)
-        protein_representation = torch.sum(residue_representation * mask.unsqueeze(-1), dim=1) / denom  # remove padding
-        
-        return protein_representation,residue_representation
-
-
+    def forward(self, x,seq_only=False):
+        with torch.no_grad():
+            residue_representation = self.esm2(x, repr_layers=[self.esm2.num_layers], return_contacts=False)['representations'][
+                                     self.esm2.num_layers]
+            #used in model pretrainning 
+            if seq_only:
+                mask = ((x != self.alphabet.padding_idx) & (x != self.alphabet.cls_idx) & (
+                         x != self.alphabet.eos_idx))
+            else:
+                mask = (x != self.alphabet.padding_idx).to(x.device)  # use this in v2 training
+            
+            denom = torch.sum(mask, -1, keepdim=True)
+            if not self.merge2ESM2:
+                protein_representation = torch.sum(residue_representation * mask.unsqueeze(-1), dim=1) / denom  # remove padding
+                return protein_representation,residue_representation,mask
+            else:
+                residue_representation_ESM2 = self.baseesm2(x,repr_layers=[self.baseesm2.num_layers],return_contacts=False)['representations'][
+                                              self.baseesm2.num_layers]
+                
+                residue_representation_merged = (residue_representation+residue_representation_ESM2)/2
+                protein_representation_merged = torch.sum(residue_representation_merged * mask.unsqueeze(-1), dim=1) / denom  # remove padding
+                return protein_representation_merged,residue_representation_merged,mask
 
 class Encoder(nn.Module):
     def __init__(self, logging, configs):
