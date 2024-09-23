@@ -183,7 +183,7 @@ def prepare_esm_model(configs, logging=None):
             
             model.prefix_module = PrefixTuning(model, prompt_len=configs.encoder.prompt.prompt_len,
                                 prompt_layer_indices=configs.encoder.prompt.prompt_layer_indices,
-                                num_tasks = configs.encoder.prompt.num_tasks
+                                #num_tasks = configs.encoder.prompt.num_tasks
                                 )
             for param in model.prefix_module.parameters():
                 param.requires_grad = True
@@ -292,7 +292,7 @@ def prepare_adapter_h_model(configs, logging=None):
         
         model.prefix_module = PrefixTuning(model, prompt_len=configs.encoder.prompt.prompt_len,
                                 prompt_layer_indices=configs.encoder.prompt.prompt_layer_indices,
-                                num_tasks = configs.encoder.prompt.num_tasks
+                                #num_tasks = configs.encoder.prompt.num_tasks
                                 )
         for param in model.prefix_module.parameters():
             param.requires_grad = True

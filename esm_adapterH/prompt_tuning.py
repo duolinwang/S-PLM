@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+from .adapter import ResMLP
 from typing import List
 
 _LAYER_PREFIX = "layer_"
@@ -104,6 +105,7 @@ class PrefixTuning(nn.Module):
       where the prompt is added. Defaults to 0.
     mlp_bottleneck_size (int, optional): The size of the MLP bottleneck layer.
       Defaults to 0.
+    device (str, optional): The device to run the module on. Defaults to "cpu".
   """
 
   def __init__(self,
@@ -111,16 +113,7 @@ class PrefixTuning(nn.Module):
               prompt_len: int = None,
               input_seq_len: int = 70,
               prompt_layer_indices: List[int] = [0],
-              num_tasks = 1,):
-    """
-    Initializes the PrefixTuning class.
-    Args:
-      backbone (nn.Module): The backbone model.
-      prompt_len (int, optional): The length of the prompt. Defaults to None.
-      prompt_layer_indices (List[int], optional): The indices of the layers to 
-        apply the prompt. Defaults to [0].
-      num_tasks (int, optional): The number of tasks. Defaults to 1.
-    """
+              device="cpu"):
     super(PrefixTuning, self).__init__()
     
     assert isinstance(prompt_layer_indices, list), ("prompt_layer_indices "
@@ -129,6 +122,7 @@ class PrefixTuning(nn.Module):
     self.prompt_len = prompt_len
     self.input_seq_len = input_seq_len
     self.prompt_layer_indices = prompt_layer_indices
+    self.device = device
 
     token_embed_table = backbone.embed_tokens.weight
     embed_size = token_embed_table.shape[-1]
@@ -143,29 +137,9 @@ class PrefixTuning(nn.Module):
     if prompt_len is not None:
       self.prompt_layer_dict = nn.ParameterDict()
       for idx in self.prompt_layer_indices:
-        embedding_matrices = torch.zeros(num_tasks, 
-                                         prompt_len, 
-                                         embed_size)
-        
-        for i in range(num_tasks):
-          embedding_matrices[i] = (
-            from_sample_of_embeddings(token_embed_table)([prompt_len, 
-                                                          embed_size]))
-        self.prompt_layer_dict[f"{_LAYER_PREFIX}{idx}"] = embedding_matrices
-
-  def _retrieve_embedding(self, task_ids, embeddings):
-    """
-    Retrieve embeddings for the given task IDs.
-
-    Args:
-      task_ids (Tensor): A tensor containing the task IDs.
-      embeddings (Tensor): A tensor containing the embeddings.
-
-    Returns:
-      Tensor: A tensor containing the retrieved embeddings.
-
-    """
-    return embeddings[task_ids].squeeze(1)
+        self.prompt_layer_dict[f"{_LAYER_PREFIX}{idx}"] = (
+          from_sample_of_embeddings(token_embed_table)([prompt_len, 
+                                                        embed_size]))
 
 
   def prefix_concat(self, prompt_weight, input_embedding) -> torch.Tensor:
@@ -198,40 +172,26 @@ class PrefixTuning(nn.Module):
 
   def forward(self,
               input_embedding: torch.Tensor,
-              layer_idx: int = 0,
-              task_ids: torch.Tensor = None
-              ) -> torch.Tensor:
+              layer_idx: int = 0) -> torch.Tensor:
     """
-    Forward pass of the PromptTunning module.
-    
+    Forward pass of the model adding prompt weight to a specific embedding.
+
     Args:
-      input_embedding (torch.Tensor): The input embedding tensor of 
-        shape [B, T, E], where B is the batch size, T is the sequence length, 
-        and E is the embedding dimension.
-      layer_idx (int, optional): The index of the layer. Defaults to 0.
-      task_ids (torch.Tensor, optional): The task IDs tensor of shape [B], 
-        where B is the batch size. Defaults to None.
-    
+      input_embedding (torch.Tensor): Input embedding tensor of shape [B, T, E].
+      layer_idx (int): Index of the layer.
+
     Returns:
-      torch.Tensor: The output embedding tensor of shape [B, PromptT+T, E], 
-        where B is the batch size, PromptT is the length of the prompt, 
-        T is the sequence length, and E is the embedding dimension. 
-        If the prompt length is 0 or the layer index is not in the prompt 
-        layer indices, the input_embedding tensor is returned as is.
-    
+      torch.Tensor: Output embedding tensor of shape [B, T, E].
     """
 
     if (self.prompt_len == 0) or (layer_idx not in self.prompt_layer_indices):
       return input_embedding
 
-    # if task_ids is not provided, set it to zeros to get the first embeeding.
-    if task_ids is None:
-      task_ids = torch.zeros(input_embedding.shape[0], dtype=torch.int)
-    
-    prompt_embedding = self._retrieve_embedding(
-      task_ids, 
-      self.prompt_layer_dict[f"{_LAYER_PREFIX}{layer_idx}"])
+    prompted_embedding = self.expand_to_batch(
+      self.prompt_layer_dict[f"{_LAYER_PREFIX}{layer_idx}"],
+      input_embedding)
 
-    # [B,P,E] + [B,T,E] => [B,P+T,E]
-    input_embedding = self.prefix_concat(prompt_embedding, input_embedding)
+    # [B,PromptT,E] + [B,T,E] => [B,PromptT+T,E]
+    input_embedding = self.prefix_concat(prompted_embedding, input_embedding)
     return input_embedding
+  

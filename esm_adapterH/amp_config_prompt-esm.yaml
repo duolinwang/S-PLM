@@ -1,0 +1,77 @@
+fix_seed: 0
+checkpoints_every: 128
+tensorboard_log: True
+result_path: ./results/amp_esm2-prompt
+
+resume:
+  enable: True
+  resume_path: /data1/qsh226/ESM2_models/esm2_t33_650M_UR50D.pt
+  restart_optimizer: True
+
+
+encoder:
+  model_name:  facebook/esm2_t33_650M_UR50D # facebook/esm2_t33_650M_UR50D, facebook/esm2_t30_150M_UR50D, facebook/esm2_t12_35M_UR50D, facebook/esm2_t6_8M_UR50D, Rostlab/prot_t5_base_mt_uniref50
+  max_len: 512
+  tune_embedding: False
+  adapter_h:
+    enable: False
+    num_end_adapter_layers: 12
+    module_type: "MLP1"
+    freeze_adapter_layers: True
+  fine_tune:
+    enable: False
+    freeze_adapter_layers: False
+    last_layers_trainable: 5
+  lora:
+    enable: False
+    r: 8
+    lora_alpha: 32
+    lora_dropout: 0.05
+    esm_num_end_lora: 33
+  prompt:
+    enable: True
+    prompt_len: 10
+    prompt_layer_indices: [0]
+  num_classes: 2
+
+train_settings:
+  data_path: ../SPLM_Data/amp_data/amp-train-1.csv
+  num_epochs: 50
+  shuffle: True
+  loss: focal # crossentropy or focal
+  sample_weight: False
+  mixed_precision: fp16 # no, fp16, bf16, fp8
+  device: cuda
+  batch_size: 32
+  num_workers: 0
+  grad_accumulation: 1
+
+valid_settings:
+  data_path: ../SPLM_Data/amp_data/amp-valid-1.csv
+  do_every: 1
+  batch_size: 32
+  device: cuda
+  num_workers: 0
+
+test_settings:
+  data_path: ../SPLM_Data/amp_data/amp-test-1.csv
+  batch_size: 32
+  device: cuda
+  num_workers: 0
+
+optimizer:
+  name: adam
+  lr: 0.00001
+  weight_decouple: True
+  weight_decay: 0.0005
+  eps: 1e-16
+  beta_1: 0.9
+  beta_2: 0.999
+  use_8bit_adam: False
+  grad_clip_norm: 1
+  decay:
+    warmup: 256
+    min_lr: 1e-6
+    gamma: 1
+    num_restarts: 1
+    first_cycle_steps: null # null or an integer number (ignore num_restarts)
