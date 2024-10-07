@@ -26,7 +26,7 @@ def main():
     batch_labels, batch_strs, batch_tokens = model.batch_converter(esm2_seq)
 
     # Get the protein representation and residue representation
-    protein_representation, residue_representation = model(batch_tokens)
+    protein_representation, residue_representation,mask = model(batch_tokens)
 
 
 if __name__ == '__main__':
