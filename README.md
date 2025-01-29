@@ -96,6 +96,8 @@ similar to the following code:
     # Get the protein representation and residue representation
     protein_representation, residue_representation,mask = model(batch_tokens)
 ```
+## S-PLM Pretraining
+For advanced users who wish to pretrain S-PLM from scratch, please refer to the [pretrain](https://github.com/duolinwang/S_PLM1-pretrain/tree/main)
 
 ## 📜 Citation
 If you use this code or the pretrained models, please cite the following paper:
