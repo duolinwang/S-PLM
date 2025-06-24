@@ -1,7 +1,7 @@
 ## S-PLM V1
 From paper: Wang, Duolin et al. “S-PLM: Structure-Aware Protein Language Model via Contrastive Learning Between Sequence and Structure.” Advanced science (Weinheim, Baden-Wurttemberg, Germany) vol. 12,5 (2025): e2404212. doi:10.1002/advs.202404212
 
- **Pretrained model ** [Download from SharePoint](https://mailmissouri-my.sharepoint.com/:f:/g/personal/wangdu_umsystem_edu/Evk7BBT5LxRMpsHzKxmi0DEBrgv1mgBK0MRuRHJSqSoHZQ?e=Eozrwh)
+- **Pretrained model:** [Download from SharePoint](https://mailmissouri-my.sharepoint.com/:u:/r/personal/wangdu_umsystem_edu/Documents/S-PLM-model/model/checkpoint_0520000.pth?csf=1&web=1&e=dMW6EO)
 ## S-PLM V2
 From paper: Zhang, Yichuan et al. "Enhancing Structure-aware Protein Language Models with Efficient Fine-tuning for Various Protein Prediction Tasks", bioRxiv, 2025.
 #### An updated residue level model。
