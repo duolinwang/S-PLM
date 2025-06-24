@@ -6,15 +6,13 @@
 
 [![paper](https://img.shields.io/badge/bioRxiv-Paper-<COLOR>.svg)](https://www.biorxiv.org/content/10.1101/2023.08.06.552203v3)
 
-This is the official implementation of S-PLM paper. S-PLM is a 3D structure-aware protein language model (PLM) that enables the sequence-based embedding to carry the structural information through multi-view contrastive learning. 
+This is the official implementation of S-PLM paper (S-PLM V1). S-PLM is a 3D structure-aware protein language model (PLM) that enables the sequence-based embedding to carry the structural information through multi-view contrastive learning. 
 
 This repository offers comprehensive guidance on utilizing pre-trained S-PLM models to generate structure-aware protein representations. Additionally, it provides a library of code for implementing lightweight tuning methods tailored for various downstream supervised learning tasks involving proteins.
 
 The tasks include Enzyme Commission number (EC) prediction, Gene Ontology (GO) prediction, protein fold (fold) and enzyme reaction (ER) classification, and protein secondary structure (SS) prediction. 
 
 The lightweight tunning methods include fine-tune top layers, Adapter Tuning, and Low-rank adaptation (LoRA). Users can train a task-specific model using different tuning methods by modifying the configuration files provided in the [configs directory](https://github.com/duolinwang/S-PLM/tree/main/configs)
-
-
 
 ## Installation
 To use S-PLM project, install the corresponding environment.yaml file in your environment. Or you can follow the install.sh file to install the dependencies.
@@ -99,6 +97,8 @@ similar to the following code:
 ## S-PLM Pretraining
 For advanced users who wish to pretrain S-PLM from scratch, please refer to the [pretrain](https://github.com/duolinwang/S_PLM1-pretrain/tree/main)
 
+## To use an updated residue level model S-PLM V2, refer to [model explaination]((https://github.com/duolinwang/S-PLM/blob/main/model/Model%20readme.md)
+
 ## 📜 Citation
 If you use this code or the pretrained models, please cite the following paper:
 ### 1 S-PLM V1: protein-level contrastive learning, using Swin-transformer as protein structure encoder.
@@ -116,4 +116,4 @@ Wang D, Pourmirzaei M, Abbas UL, Zeng S, Manshour N, Esmaili F, Poudel B, Jiang 
 	URL = {https://www.biorxiv.org/content/early/2025/04/26/2025.04.23.650337},
 	eprint = {https://www.biorxiv.org/content/early/2025/04/26/2025.04.23.650337.full.pdf},
 	journal = {bioRxiv}
-}```
+}
