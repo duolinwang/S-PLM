@@ -101,9 +101,9 @@ For advanced users who wish to pretrain S-PLM from scratch, please refer to the 
 
 ## 📜 Citation
 If you use this code or the pretrained models, please cite the following paper:
-1 S-PLM V1: protein-level contrastive learning, using Swin-transformer as protein structure encoder.
+### 1 S-PLM V1: protein-level contrastive learning, using Swin-transformer as protein structure encoder.
 Wang D, Pourmirzaei M, Abbas UL, Zeng S, Manshour N, Esmaili F, Poudel B, Jiang Y, Shao Q, Chen J, Xu D. S-PLM: Structure-Aware Protein Language Model via Contrastive Learning Between Sequence and Structure. Adv Sci (Weinh). 2025 Feb;12(5):e2404212. doi: 10.1002/advs.202404212. Epub 2024 Dec 12. PMID: 39665266; PMCID: PMC11791933.
-2 S-PLM V2: updated residue level model, using GVP as protein structure encoder.
+### 2 S-PLM V2: updated residue level model, using GVP as protein structure encoder.
 ```bibtex
 @article {Zhang2025.04.23.650337,
 	author = {Zhang, Yichuan and Qin, Yongfang and Pourmirzaei, Mahdi and Shao, Qing and Wang, Duolin and Xu, Dong},
@@ -116,4 +116,4 @@ Wang D, Pourmirzaei M, Abbas UL, Zeng S, Manshour N, Esmaili F, Poudel B, Jiang 
 	URL = {https://www.biorxiv.org/content/early/2025/04/26/2025.04.23.650337},
 	eprint = {https://www.biorxiv.org/content/early/2025/04/26/2025.04.23.650337.full.pdf},
 	journal = {bioRxiv}
-}```bibtex
+}```
