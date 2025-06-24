@@ -4,12 +4,12 @@ From paper: Wang, Duolin et al. “S-PLM: Structure-Aware Protein Language Model
  **Pretrained model ** [Download from SharePoint](https://mailmissouri-my.sharepoint.com/:f:/g/personal/wangdu_umsystem_edu/Evk7BBT5LxRMpsHzKxmi0DEBrgv1mgBK0MRuRHJSqSoHZQ?e=Eozrwh)
 ## S-PLM V2
 From paper: Zhang, Yichuan et al. "Enhancing Structure-aware Protein Language Models with Efficient Fine-tuning for Various Protein Prediction Tasks", bioRxiv, 2025.
-### An updated residue level model。
+#### An updated residue level model。
 - **Pretrained Model:** [Download from SharePoint](https://mailmissouri-my.sharepoint.com/:u:/g/personal/wangdu_umsystem_edu/EUZ74fO3NOxHjTvc6uvKwDsB5fELaaw-oiPHFU9CJky_hg?e=4phwL0)
 
-## Configuration
+#### Configuration
 **Important:** To use this model, you must modify the `num_end_adapter_layers` parameter from the default value of 16 to 12, otherwise the pretrained model will fail to load.
-### Option 1: Modify Config Files
+#### Option 1: Modify Config Files
 
 Update your configuration files as follows:
 
@@ -23,7 +23,7 @@ Update your configuration files as follows:
   num_end_adapter_layers: 12
   ```
 
-### Option 2: Use Command Line Parameters
+#### Option 2: Use Command Line Parameters
 Alternatively, you can use the same config files from S-PLM V1 and override the parameter via command line:
 - **For other tuning methods:**
   ```bash
