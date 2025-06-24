@@ -101,17 +101,19 @@ For advanced users who wish to pretrain S-PLM from scratch, please refer to the 
 
 ## 📜 Citation
 If you use this code or the pretrained models, please cite the following paper:
+1 S-PLM V1: protein-level contrastive learning, using Swin-transformer as protein structure encoder.
+Wang D, Pourmirzaei M, Abbas UL, Zeng S, Manshour N, Esmaili F, Poudel B, Jiang Y, Shao Q, Chen J, Xu D. S-PLM: Structure-Aware Protein Language Model via Contrastive Learning Between Sequence and Structure. Adv Sci (Weinh). 2025 Feb;12(5):e2404212. doi: 10.1002/advs.202404212. Epub 2024 Dec 12. PMID: 39665266; PMCID: PMC11791933.
+2 S-PLM V2: updated residue level model, using GVP as protein structure encoder.
 ```bibtex
-@article {Wang2023.08.06.552203,
-	author = {Duolin Wang and Mahdi Pourmirzaei and Usman L Abbas and Shuai Zeng and Negin Manshour and Farzaneh Esmaili and Biplab Poudel and Yuexu Jiang and Qing Shao and Jin Chen and Dong Xu},
-	title = {S-PLM: Structure-aware Protein Language Model via Contrastive Learning between Sequence and Structure},
-	elocation-id = {2023.08.06.552203},
-	year = {2024},
-	doi = {10.1101/2023.08.06.552203},
+@article {Zhang2025.04.23.650337,
+	author = {Zhang, Yichuan and Qin, Yongfang and Pourmirzaei, Mahdi and Shao, Qing and Wang, Duolin and Xu, Dong},
+	title = {Enhancing Structure-aware Protein Language Models with Efficient Fine-tuning for Various Protein Prediction Tasks},
+	elocation-id = {2025.04.23.650337},
+	year = {2025},
+	doi = {10.1101/2025.04.23.650337},
 	publisher = {Cold Spring Harbor Laboratory},
-	abstract = {Large protein language models (PLMs) present excellent potential to reshape protein research by encoding the amino acid sequences into mathematical and biological meaningful embeddings. However, the lack of crucial 3D structure information in most PLMs restricts the prediction capacity of PLMs in various applications, especially those heavily depending on 3D structures. To address this issue, we introduce S-PLM, a 3D structure-aware PLM utilizing multi-view contrastive learning to align the sequence and 3D structure of a protein in a coordinate space. S-PLM applies Swin-Transformer on AlphaFold-predicted protein structures to embed the structural information and fuses it into sequence-based embedding from ESM2. Additionally, we provide a library of lightweight tuning tools to adapt S-PLM for diverse protein property prediction tasks. Our results demonstrate S-PLM{\textquoteright}s superior performance over sequence-only PLMs, achieving competitiveness in protein function prediction compared to state-of-the-art methods employing both sequence and structure inputs.Competing Interest StatementThe authors have declared no competing interest.},
-	URL = {https://www.biorxiv.org/content/early/2024/01/28/2023.08.06.552203},
-	eprint = {https://www.biorxiv.org/content/early/2024/01/28/2023.08.06.552203.full.pdf},
+	abstract = {Proteins are crucial in a wide range of biological and engineering processes. Large protein language models (PLMs) can significantly advance our understanding and engineering of proteins. However, the effectiveness of PLMs in prediction and design is largely based on the representations derived from protein sequences. Without incorporating the three-dimensional structures of proteins, PLMs would overlook crucial aspects of how proteins interact with other molecules, thereby limiting their predictive accuracy. To address this issue, we present S-PLM, a 3D structure-aware PLM that employs multi-view contrastive learning to align protein sequences with their 3D structures in a unified latent space. Previously, we utilized a contact map-based approach to encode structural information, applying the Swin-Transformer to contact maps derived from AlphaFold-predicted protein structures. This work introduces a new approach that leverages a Geometric Vector Perceptron (GVP) model to process 3D coordinates and obtain structural embeddings. We focus on the application of structure-aware models for protein-related tasks by utilizing efficient fine-tuning methods to achieve optimal performance without significant computational costs. Our results show that S-PLM outperforms sequence-only PLMs across all protein clustering and classification tasks, achieving performance on par with state-of-the-art methods that require both sequence and structure inputs. S-PLM and its tuning tools are available at https://github.com/duolinwang/S-PLM/.Competing Interest StatementThe authors have declared no competing interest.National Institutes of Health, , R35GM126985, R01LM014510National Science Foundation, , 2138259, 2138286, 2138307, 2137603, 2138296},
+	URL = {https://www.biorxiv.org/content/early/2025/04/26/2025.04.23.650337},
+	eprint = {https://www.biorxiv.org/content/early/2025/04/26/2025.04.23.650337.full.pdf},
 	journal = {bioRxiv}
-}
-```
+}```bibtex
