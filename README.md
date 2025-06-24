@@ -13,9 +13,9 @@ This repository offers comprehensive guidance on utilizing pre-trained S-PLM mod
 
 The tasks include Enzyme Commission number (EC) prediction, Gene Ontology (GO) prediction, protein fold (fold) and enzyme reaction (ER) classification, and protein secondary structure (SS) prediction. 
 
-The lightweight tunning methods include fine-tune top layers, Adapter Tuning, and Low-rank adaptation (LoRA). Users can train a task-specific model using different tuning methods by modifying the configuration files provided in the [configs directory](https://github.com/duolinwang/S-PLM/tree/main/configs)
+The lightweight tuning methods include fine-tune top layers, Adapter Tuning, and Low-rank adaptation (LoRA). Users can train a task-specific model using different tuning methods by modifying the configuration files provided in the [configs directory](https://github.com/duolinwang/S-PLM/tree/main/configs)
 ## S-PLM V2
-To use an updated residue-level pre-trained model, refer to [model explaination](https://github.com/duolinwang/S-PLM/blob/main/model/Model%20readme.md)
+To use an updated residue-level pre-trained model, refer to [model explanation](https://github.com/duolinwang/S-PLM/blob/main/model/Model%20readme.md)
 ## Installation
 To use S-PLM project, install the corresponding environment.yaml file in your environment. Or you can follow the install.sh file to install the dependencies.
 
@@ -37,7 +37,7 @@ bash install.sh
 
 ## Run
 ### Use S-PLM for downstream tasks
-To utilize the accelerator power in you training code such as distributed multi GPU training, you have to set the accelerator config by running `accelearte config` in the command line.
+To utilize the accelerator power in your training code, such as distributed multi-GPU training, you have to set the accelerator config by running `accelerate config` in the command line.
 Then, you have to set the training settings and hyperparameters inside your target task `configs/config_{task}.yaml` file.
 Finally, you can start your training for downstream tasks using a config file from configs and a pretrained [S-PLM model](https://mailmissouri-my.sharepoint.com/:f:/g/personal/wangdu_umsystem_edu/Evk7BBT5LxRMpsHzKxmi0DEBrgv1mgBK0MRuRHJSqSoHZQ?e=Eozrwh) by running
 ```commandline
@@ -45,13 +45,13 @@ accelerate launch train_{task}.py --config_path configs/<config_name> --resume_p
 ```
 
 ### Examples 
-#### Train and evaluate of GO prediction tasks
+#### Training and evaluation of GO prediction tasks
 ```commandline
 accelerate launch train_go.py --config_path configs/bp_config_adapterH_adapterH.yaml --resume_path model/checkpoint_0520000.pth
 accelerate launch train_go.py --config_path configs/cc_config_adapterH_adapterH.yaml --resume_path model/checkpoint_0520000.pth
 accelerate launch train_go.py --config_path configs/mf_config_adapterH_adapterH.yaml --resume_path model/checkpoint_0520000.pth
 ```
-#### Train and evaluate of fold classification
+#### Train and evaluate fold classification
 ```commandline
 accelerate launch train_fold.py --config_path configs/fold_config_adapterH_finetune.yaml --resume_path model/checkpoint_0520000.pth
 ```
