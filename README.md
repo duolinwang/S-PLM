@@ -13,7 +13,7 @@ This repository offers comprehensive guidance on utilizing pre-trained S-PLM mod
 The tasks include Enzyme Commission number (EC) prediction, Gene Ontology (GO) prediction, protein fold (fold) and enzyme reaction (ER) classification, and protein secondary structure (SS) prediction. 
 
 The lightweight tunning methods include fine-tune top layers, Adapter Tuning, and Low-rank adaptation (LoRA). Users can train a task-specific model using different tuning methods by modifying the configuration files provided in the [configs directory](https://github.com/duolinwang/S-PLM/tree/main/configs)
-
+## To use an updated residue-level pre-trained model: S-PLM V2, refer to [model explaination](https://github.com/duolinwang/S-PLM/blob/main/model/Model%20readme.md)
 ## Installation
 To use S-PLM project, install the corresponding environment.yaml file in your environment. Or you can follow the install.sh file to install the dependencies.
 
@@ -96,8 +96,6 @@ similar to the following code:
 ```
 ## S-PLM Pretraining
 For advanced users who wish to pretrain S-PLM from scratch, please refer to the [pretrain](https://github.com/duolinwang/S_PLM1-pretrain/tree/main)
-
-## To use an updated residue level model S-PLM V2, refer to [model explaination](https://github.com/duolinwang/S-PLM/blob/main/model/Model%20readme.md)
 
 ## 📜 Citation
 If you use this code or the pretrained models, please cite the following paper:
