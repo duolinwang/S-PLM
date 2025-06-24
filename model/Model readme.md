@@ -8,7 +8,7 @@ From paper: Zhang, Yichuan et al. "Enhancing Structure-aware Protein Language Mo
 - **Pretrained Model:** [Download from SharePoint](https://mailmissouri-my.sharepoint.com/:u:/g/personal/wangdu_umsystem_edu/EUZ74fO3NOxHjTvc6uvKwDsB5fELaaw-oiPHFU9CJky_hg?e=4phwL0)
 
 #### Configuration
-**Important:** To use this model, you must modify the `num_end_adapter_layers` parameter from the default value of 16 to 12, otherwise the pretrained model will fail to load.
+**Important:** To use this model, you can use the same codes and configs for downstream tasks, except you must modify the num_end_adapter_layers parameter in the config files from the default value of 16 to 12, otherwise the pretrained model will fail to load.
 #### Option 1: Modify Config Files
 
 Update your configuration files as follows:
