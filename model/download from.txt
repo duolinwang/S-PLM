@@ -1,3 +1,5 @@
 https://mailmissouri-my.sharepoint.com/:f:/g/personal/wangdu_umsystem_edu/Evk7BBT5LxRMpsHzKxmi0DEBrgv1mgBK0MRuRHJSqSoHZQ?e=Eozrwh
 
-The updated residue level model can be downloaded from https://mailmissouri-my.sharepoint.com/:u:/g/personal/wangdu_umsystem_edu/EUZ74fO3NOxHjTvc6uvKwDsB5fELaaw-oiPHFU9CJky_hg?e=4phwL0
+The updated residue level model can be downloaded from 
+https://mailmissouri-my.sharepoint.com/:u:/g/personal/wangdu_umsystem_edu/EUZ74fO3NOxHjTvc6uvKwDsB5fELaaw-oiPHFU9CJky_hg?e=4phwL0
+To use it, modify the first value of num_end_adapter_layers from 16 to 12. For example, "num_end_adapter_layers: [12,16]", otherwise the pretrained model cannot be loaded successfully.
