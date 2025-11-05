@@ -37,7 +37,7 @@ train_settings:
   sample_weight: False
   mixed_precision: fp16 # no, fp16, bf16, fp8
   device: cuda
-  batch_size: 32
+  batch_size: 16
   num_workers: 0
   grad_accumulation: 1
 
@@ -45,14 +45,14 @@ valid_settings:
   data_path: /S-PLM/SPLM_Data/GO_data/GO_valid.csv
   label_path: /S-PLM/SPLM_Data/GO_data/nrPDB-GO_annot.tsv
   do_every: 1
-  batch_size: 64
+  batch_size: 32
   device: cuda
   num_workers: 0
 
 test_settings:
   data_path: /S-PLM/SPLM_Data/GO_data/GO_test.csv
   label_path: /S-PLM/SPLM_Data/GO_data/nrPDB-GO_annot.tsv
-  batch_size: 64
+  batch_size: 32
   device: cuda
   num_workers: 0
 
