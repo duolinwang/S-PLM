@@ -36,6 +36,11 @@ bash install.sh
 ```
 
 ## Run
+[![Colab quickstart](https://img.shields.io/badge/Colab-quickstart-e91e63)](#)
+>**Colab quickstart available:** Use our minimal [**S-PLM v1 Colab**](https://github.com/duolinwang/S-PLM/blob/main/SPLM_v1_sequence_embedding_quickstart.ipynb) to set up dependencies, load the checkpoint, quickly extract embeddings, and kick off downstream training.
+
+
+
 ### Use S-PLM for downstream tasks
 To utilize the accelerator power in your training code, such as distributed multi-GPU training, you have to set the accelerator config by running `accelerate config` in the command line.
 Then, you have to set the training settings and hyperparameters inside your target task `configs/config_{task}.yaml` file.
@@ -65,7 +70,7 @@ You might not use accelerator to run the `train.py` script if you just want to *
 run the code by `python train_{task}.py`. It should be noted that accelerate supports single gpu and distributed training. So, you can use it for your 
 final training.
 
-#### Extract sequence representation
+### Extract sequence representation
 To extract the protein sequence representation from a pre-trained S-PLM, you can use the `extract_sequence_representation.py`
 similar to the following code:
 
@@ -99,11 +104,11 @@ similar to the following code:
 ## S-PLM Pretraining
 For advanced users who wish to pretrain S-PLM from scratch, please refer to the [pretrain](https://github.com/duolinwang/S_PLM1-pretrain/tree/main)
 
-## 📜 Citation
+## Citation
 If you use this code or the pretrained models, please cite the following paper:
-### 1 S-PLM V1: protein-level contrastive learning, using Swin-transformer as protein structure encoder.
+### [1] S-PLM V1: protein-level contrastive learning, using Swin-transformer as protein structure encoder.
 Wang D, Pourmirzaei M, Abbas UL, Zeng S, Manshour N, Esmaili F, Poudel B, Jiang Y, Shao Q, Chen J, Xu D. S-PLM: Structure-Aware Protein Language Model via Contrastive Learning Between Sequence and Structure. Adv Sci (Weinh). 2025 Feb;12(5):e2404212. doi: 10.1002/advs.202404212. Epub 2024 Dec 12. PMID: 39665266; PMCID: PMC11791933.
-### 2 S-PLM V2: updated residue level model, using GVP as protein structure encoder.
+### [2] S-PLM V2: updated residue level model, using GVP as protein structure encoder.
 ```bibtex
 @article {Zhang2025.04.23.650337,
 	author = {Zhang, Yichuan and Qin, Yongfang and Pourmirzaei, Mahdi and Shao, Qing and Wang, Duolin and Xu, Dong},
