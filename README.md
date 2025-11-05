@@ -37,7 +37,7 @@ bash install.sh
 
 ## Run
 [![Colab quickstart](https://img.shields.io/badge/Colab-quickstart-e91e63)](#)
->**Colab quickstart available:** Use our minimal [**S-PLM v1 Colab**](https://github.com/duolinwang/S-PLM/blob/main/SPLM_v1_sequence_embedding_quickstart.ipynb) to set up dependencies, load the checkpoint, quickly extract embeddings, and kick off downstream training.
+>**Colab quickstart available:** Use our minimal [**S-PLM v1 Colab**](https://github.com/duolinwang/S-PLM/blob/main/SPLM_v1_sequence_embedding_quickstart.ipynb) to set up dependencies, load the checkpoint, extract embeddings, and launch downstream training.
 
 
 
