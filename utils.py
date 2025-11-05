@@ -232,11 +232,10 @@ def load_configs(config, args=None):
         if args.module_type:
             tree_config.encoder.adapter_h.module_type = args.module_type
 
-    print("num_end_adapter_layers!!!!!!!!")
-    print(tree_config.encoder.adapter_h.num_end_adapter_layers)
+    print("num_end_adapter_layers", tree_config.encoder.adapter_h.num_end_adapter_layers)
 
-    print("freeze_adapter_layers!!!!!!!!")
-    print(tree_config.encoder.adapter_h.freeze_adapter_layers)
+    print("freeze_adapter_layers", tree_config.encoder.adapter_h.freeze_adapter_layers)
+
     return tree_config
 
 
