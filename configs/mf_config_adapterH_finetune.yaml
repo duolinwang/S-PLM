@@ -30,8 +30,8 @@ encoder:
   num_labels: 489
 
 train_settings:
-  data_path:  /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/GO_data/GO_train.csv
-  label_path: /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/GO_data/nrPDB-GO_annot.tsv
+  data_path:  /S-PLM/SPLM_Data/GO_data/GO_train.csv
+  label_path: /S-PLM/SPLM_Data/GO_data/nrPDB-GO_annot.tsv
   num_epochs: 200
   shuffle: True
   loss: bce-logit # crossentropy or focal
@@ -43,16 +43,16 @@ train_settings:
   grad_accumulation: 1
 
 valid_settings:
-  data_path: /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/GO_data/GO_valid.csv
-  label_path: /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/GO_data/nrPDB-GO_annot.tsv
+  data_path: /S-PLM/SPLM_Data/GO_data/GO_valid.csv
+  label_path: /S-PLM/SPLM_Data/GO_data/nrPDB-GO_annot.tsv
   do_every: 1
   batch_size: 128
   device: cuda
   num_workers: 0
 
 test_settings:
-  data_path: /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/GO_data/GO_test.csv
-  label_path: /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/GO_data/nrPDB-GO_annot.tsv
+  data_path: /S-PLM/SPLM_Data/GO_data/GO_test.csv
+  label_path: /S-PLM/SPLM_Data/GO_data/nrPDB-GO_annot.tsv
   batch_size: 128
   device: cuda
   num_workers: 0

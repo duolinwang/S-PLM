@@ -32,7 +32,7 @@ encoder:
   mlp_layer_num: 2
 
 train_settings:
-  data_path: /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/SS_data/train.csv
+  data_path: /S-PLM/SPLM_Data/SS_data/train.csv
   num_epochs: 200
   shuffle: True
   loss: focal # crossentropy or focal
@@ -45,14 +45,14 @@ train_settings:
 
 
 valid_settings:
-  data_path:  /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/SS_data/valid.csv
+  data_path:  /S-PLM/SPLM_Data/SS_data/valid.csv
   do_every: 1
   batch_size: 128
   device: cuda
   num_workers: 0
 
 test_settings:
-  data_path:  /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/SS_data/test.csv
+  data_path:  /S-PLM/SPLM_Data/SS_data/test.csv
   batch_size: 128
   device: cuda
   num_workers: 0

@@ -29,7 +29,7 @@ encoder:
   num_classes: 1195
 
 train_settings:
-  data_path: ../SPLM_Data/Fold_data/train.csv
+  data_path: /S-PLM/SPLM_Data/Fold_data/train.csv
   num_epochs: 100
   shuffle: True
   loss: focal # crossentropy or focal
@@ -41,16 +41,16 @@ train_settings:
   grad_accumulation: 1
 
 valid_settings:
-  data_path: ../SPLM_Data/Fold_data/valid.csv
+  data_path: /S-PLM/SPLM_Data/Fold_data/valid.csv
   do_every: 1
   batch_size: 8
   device: cuda
   num_workers: 0
 
 test_settings:
-  data_path_family: ../SPLM_Data/Fold_data/test_family_holdout.csv
-  data_path_superfamily: ../SPLM_Data/Fold_data/test_superfamily_holdout.csv
-  data_path_fold: ../SPLM_Data/Fold_data/test_fold_holdout.csv
+  data_path_family: /S-PLM/SPLM_Data/Fold_data/test_family_holdout.csv
+  data_path_superfamily: /S-PLM/SPLM_Data/Fold_data/test_superfamily_holdout.csv
+  data_path_fold: /S-PLM/SPLM_Data/Fold_data/test_fold_holdout.csv
   batch_size: 8
   device: cuda
   num_workers: 0

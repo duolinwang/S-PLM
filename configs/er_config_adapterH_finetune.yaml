@@ -31,7 +31,7 @@ encoder:
   num_classes: 384
 
 train_settings:
-  data_path: /mnt/pixstor/dbllab/negin/SPLM_Data/Enzyme_Reaction_data/train.csv
+  data_path: /S-PLM/SPLM_Data/Enzyme_Reaction_data/train.csv
   num_epochs: 200
   shuffle: True
   loss: focal # crossentropy or focal
@@ -43,14 +43,14 @@ train_settings:
   grad_accumulation: 1
 
 valid_settings:
-  data_path: /mnt/pixstor/dbllab/negin/SPLM_Data/Enzyme_Reaction_data/validation.csv
+  data_path: /S-PLM/SPLM_Data/Enzyme_Reaction_data/validation.csv
   do_every: 1
   batch_size: 128
   device: cuda:1
   num_workers: 0
 
 test_settings:
-  data_path: /mnt/pixstor/dbllab/negin/SPLM_Data/Enzyme_Reaction_data/test.csv
+  data_path: /S-PLM/SPLM_Data/Enzyme_Reaction_data/test.csv
   batch_size: 128
   device: cuda:1
   num_workers: 0

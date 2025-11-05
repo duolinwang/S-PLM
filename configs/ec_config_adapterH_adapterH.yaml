@@ -28,8 +28,8 @@ encoder:
   num_labels: 538
 
 train_settings:
-  data_path:  /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/EC_data/EC_train.csv
-  label_path: /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/EC_data/nrPDB-EC_annot.tsv
+  data_path:  /S-PLM/SPLM_Data/EC_data/EC_train.csv
+  label_path: /S-PLM/SPLM_Data/EC_data/nrPDB-EC_annot.tsv
   num_epochs: 200
   shuffle: True
   loss: bce-logit # crossentropy, focal or binary cross entropy with logits (use "bce", BCEWITHLOGITSLoss)
@@ -41,16 +41,16 @@ train_settings:
   grad_accumulation: 1
 
 valid_settings:
-  data_path: /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/EC_data/EC_valid.csv
-  label_path: /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/EC_data/nrPDB-EC_annot.tsv
+  data_path: /S-PLM/SPLM_Data/EC_data/EC_valid.csv
+  label_path: /S-PLM/SPLM_Data/EC_data/nrPDB-EC_annot.tsv
   do_every: 1
   batch_size: 128
   device: cuda
   num_workers: 0
 
 test_settings:
-  data_path: /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/EC_data/EC_test.csv
-  label_path: /mnt/pixstor/dbllab/duolin/downstream/SPLM_Data/EC_data/nrPDB-EC_annot.tsv
+  data_path: /S-PLM/SPLM_Data/EC_data/EC_test.csv
+  label_path: /S-PLM/SPLM_Data/EC_data/nrPDB-EC_annot.tsv
   batch_size: 128
   device: cuda
   num_workers: 0
