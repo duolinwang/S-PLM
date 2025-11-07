@@ -16,6 +16,8 @@ The tasks include Enzyme Commission number (EC) prediction, Gene Ontology (GO) p
 The lightweight tuning methods include fine-tune top layers, Adapter Tuning, and Low-rank adaptation (LoRA). Users can train a task-specific model using different tuning methods by modifying the configuration files provided in the [configs directory](https://github.com/duolinwang/S-PLM/tree/main/configs)
 ## S-PLM V2
 To use an updated residue-level pre-trained model, refer to [model explanation](https://github.com/duolinwang/S-PLM/blob/main/model/Model%20readme.md)
+> We now provide a new GVP-based structure encoder. See [SPLM-V2-GVP](https://github.com/Yichuan0712/SPLM-V2-GVP)
+.
 ## Installation
 To use S-PLM project, install the corresponding environment.yaml file in your environment. Or you can follow the install.sh file to install the dependencies.
 
