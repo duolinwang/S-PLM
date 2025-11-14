@@ -66,43 +66,60 @@ accelerate launch train_fold.py --config_path configs/fold_config_adapterH_finet
 ```commandline
 accelerate launch train_ss.py --config_path configs/ss_config_adapterH_finetune.yaml --resume_path model/checkpoint_0520000.pth
 ```
-
-
 You might not use accelerator to run the `train.py` script if you just want to **debug** your script on single GPU. If so, simply after setting the `config.yaml` file
 run the code by `python train_{task}.py`. It should be noted that accelerate supports single gpu and distributed training. So, you can use it for your 
 final training.
 
 ### Extract sequence representation
-To extract the protein sequence representation from a pre-trained S-PLM, you can use the `extract_sequence_representation.py`
-similar to the following code:
-
-```python
-    import yaml
-    from utils import load_configs, load_checkpoints_only
-    from model import SequenceRepresentation
-    
-    # Create a list of protein sequences
-    sequences = ["MHHHHHHSSGVDLGTENLYFQSNAMDFPQQLEA", "CVKQANQALSRFIAPLPFQNTPVVE", "TMQYGALLGGKRLR"]
-
-    # Load the configuration file
-    config_path = "./configs/representation_config.yaml"
-    with open(config_path) as file:
-        dict_config = yaml.full_load(file)
-    configs = load_configs(dict_config)
-
-    # Create the model using the configuration file
-    model = SequenceRepresentation(logging=None, configs=configs)
-    model.eval()
-    # Load the S-PLM checkpoint file
-    checkpoint_path = "your checkpoint_path"
-    load_checkpoints_only(checkpoint_path, model)
-
-    esm2_seq = [(i, str(sequences[i])) for i in range(len(sequences))]
-    batch_labels, batch_strs, batch_tokens = model.batch_converter(esm2_seq)
-    
-    # Get the protein representation and residue representation
-    protein_representation, residue_representation,mask = model(batch_tokens)
+There are two related scripts for generating protein sequence embeddings from a pre-trained S-PLM: 
+- **`extract_sequence_representation.py`** — intended for **small-scale modifications or debugging**,  
+  allowing you to quickly run embedding generation for a few proteins directly within the script.
+**`cli_seq_embed.py`** — designed for **batch processing** of protein sequences in a FASTA file.  
+  It reads multiple sequences and outputs the embeddings to a pickle file. It supports both **protein-level** and **residue-level** representations.
+## 🚀 Usage & Key Arguments
+To generate embeddings, run:
+```bash
+python cli_seq_embed.py   --input_seq ./test.fasta   --config_path ./configs/representation_config.yaml   --checkpoint_path /path/to/checkpoint.pth   --result_path ./out
 ```
+This produces a pickle file such as `protein_embeddings.pkl` containing a dictionary that maps **protein IDs → NumPy embedding arrays**.
+| Argument | Description |
+|-----------|-------------|
+| `--input_seq` | Path to the input FASTA file containing protein sequences. |
+| `--config_path` | Path to the model configuration YAML file. |
+| `--checkpoint_path` | Optional path to pretrained model checkpoint. |
+| `--result_path` | Output directory for saving embeddings. |
+| `--out_file` | Output file name, default `protein_embeddings.pkl`. |
+| `--residue_level` | Output residue level embeddings per amino acid. |
+| `--truncate_inference` | Enable sequence truncation with 1 or 0. |
+| `--max_length_inference` | Maximum sequence length when truncation is enabled. |
+| `--afterproject` | Output post projection embeddings if supported by the model. |
+---
+## 🧪 Examples
+**Protein level embeddings**
+```bash
+python cli_seq_embed.py --input_seq sample.fasta   -c configs/representation_config.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out
+```
+**Truncated inference**
+```bash
+python cli_seq_embed.py --input_seq sample.fasta   -c configs/representation_config.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out   --truncate_inference 1   --max_length_inference 1022
+```
+**Residue level embeddings**
+```bash
+python cli_seq_embed.py --input_seq sample.fasta   -c configs/representation_config.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out   --residue_level
+```
+---
+## 💾 Output Format
+The output pickle file contains a Python dictionary:
+```python
+{
+  "protein_id_1": np.ndarray,  # shape [embedding_dim] or [seq_len, embedding_dim]
+  "protein_id_2": np.ndarray,
+  ...
+}
+```
+Each value corresponds to either a protein level or residue level embedding depending on your arguments.
+---
+
 ## S-PLM Pretraining
 For advanced users who wish to pretrain S-PLM from scratch, please refer to the [pretrain](https://github.com/duolinwang/S_PLM1-pretrain/tree/main)
 
