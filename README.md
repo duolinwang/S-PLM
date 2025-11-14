@@ -51,7 +51,7 @@ Finally, you can start your training for downstream tasks using a config file fr
 accelerate launch train_{task}.py --config_path configs/<config_name> --resume_path model/checkpoint_0520000.pth`
 ```
 
-### Examples 
+### 🚀 Examples 
 #### Training and evaluation of GO prediction tasks
 ```commandline
 accelerate launch train_go.py --config_path configs/bp_config_adapterH_adapterH.yaml --resume_path model/checkpoint_0520000.pth
@@ -76,7 +76,7 @@ There are two related scripts for generating protein sequence embeddings from a 
   allowing you to quickly run embedding generation for a few proteins directly within the script.
 **`cli_seq_embed.py`** — designed for **batch processing** of protein sequences in a FASTA file.  
   It reads multiple sequences and outputs the embeddings to a pickle file. It supports both **protein-level** and **residue-level** representations.
-## 🚀 Usage & Key Arguments
+###  Usage & Key Arguments
 To generate embeddings, run:
 ```bash
 python cli_seq_embed.py   --input_seq ./test.fasta   --config_path ./configs/representation_config.yaml   --checkpoint_path /path/to/checkpoint.pth   --result_path ./out
@@ -94,7 +94,7 @@ This produces a pickle file such as `protein_embeddings.pkl` containing a dictio
 | `--max_length_inference` | Maximum sequence length when truncation is enabled. |
 | `--afterproject` | Output post projection embeddings if supported by the model. |
 ---
-## 🧪 Examples
+### Examples
 **Protein level embeddings**
 ```bash
 python cli_seq_embed.py --input_seq sample.fasta   -c configs/representation_config.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out
@@ -108,7 +108,7 @@ python cli_seq_embed.py --input_seq sample.fasta   -c configs/representation_con
 python cli_seq_embed.py --input_seq sample.fasta   -c configs/representation_config.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out   --residue_level
 ```
 ---
-## 💾 Output Format
+### 💾 Output Format
 The output pickle file contains a Python dictionary:
 ```python
 {
