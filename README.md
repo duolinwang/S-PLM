@@ -90,11 +90,13 @@ There are two related scripts for generating protein sequence embeddings from a 
   allowing you to quickly run embedding generation for a few proteins directly within the script.
 - **`cli_seq_embed.py`** — designed for **batch processing** of protein sequences in a FASTA file.  
   It reads multiple sequences and outputs the embeddings to a pickle file. It supports both **protein-level** and **residue-level** representations.
+There are two pre-trained models that can be used; refer to [S-PLM model](https://github.com/duolinwang/S-PLM/blob/main/model/Model%20readme.md) to download pretrained weights for S-PLM1 and S-PLM2.
+To use S-PLM1, the config file should be ./configs/SPLM1_representation_config.yaml; To use S-PLM2, the config file should be ./configs/SPLM2_representation_config.yaml .
 #### Usage & Key Arguments
 
 To generate embeddings, run:
 ```bash
-python cli_seq_embed.py   --input_seq ./test.fasta   --config_path ./configs/representation_config.yaml   --checkpoint_path /path/to/checkpoint.pth   --result_path ./out
+python cli_seq_embed.py   --input_seq ./test.fasta   --config_path /path/to/configfile.yaml   --checkpoint_path /path/to/checkpoint.pth   --result_path ./out
 ```
 This produces a pickle file such as `protein_embeddings.pkl` containing a dictionary that maps **protein IDs → NumPy embedding arrays**.
 | Argument | Description |
@@ -113,15 +115,15 @@ This produces a pickle file such as `protein_embeddings.pkl` containing a dictio
 
 **Protein level embeddings**
 ```bash
-python cli_seq_embed.py --input_seq sample.fasta   -c configs/representation_config.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out
+python cli_seq_embed.py --input_seq sample.fasta   -c /path/to/configfile.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out
 ```
 **Truncated inference**
 ```bash
-python cli_seq_embed.py --input_seq sample.fasta   -c configs/representation_config.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out   --truncate_inference 1   --max_length_inference 1022
+python cli_seq_embed.py --input_seq sample.fasta   -c /path/to/configfile.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out   --truncate_inference 1   --max_length_inference 1022
 ```
 **Residue level embeddings**
 ```bash
-python cli_seq_embed.py --input_seq sample.fasta   -c configs/representation_config.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out   --residue_level
+python cli_seq_embed.py --input_seq sample.fasta   -c /path/to/configfile.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out   --residue_level
 ```
 ---
 #### 💾 Output Format
