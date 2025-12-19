@@ -96,7 +96,7 @@ To use S-PLM1, the config file should be ./configs/SPLM1_representation_config.y
 
 To generate embeddings, run:
 ```bash
-python cli_seq_embed.py   --input_seq ./test.fasta   --config_path /path/to/configfile.yaml   --checkpoint_path /path/to/checkpoint.pth   --result_path ./out
+python generate_seq_embedding.py   --input_seq ./test.fasta   --config_path /path/to/configfile.yaml   --checkpoint_path /path/to/checkpoint.pth   --result_path ./out
 ```
 This produces a pickle file such as `protein_embeddings.pkl` containing a dictionary that maps **protein IDs → NumPy embedding arrays**.
 | Argument | Description |
@@ -115,15 +115,15 @@ This produces a pickle file such as `protein_embeddings.pkl` containing a dictio
 
 **Protein level embeddings**
 ```bash
-python cli_seq_embed.py --input_seq sample.fasta   -c /path/to/configfile.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out
+python generate_seq_embedding.py --input_seq sample.fasta   -c /path/to/configfile.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out
 ```
 **Truncated inference**
 ```bash
-python cli_seq_embed.py --input_seq sample.fasta   -c /path/to/configfile.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out   --truncate_inference 1   --max_length_inference 1022
+python generate_seq_embedding.py --input_seq sample.fasta   -c /path/to/configfile.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out   --truncate_inference 1   --max_length_inference 1022
 ```
 **Residue level embeddings**
 ```bash
-python cli_seq_embed.py --input_seq sample.fasta   -c /path/to/configfile.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out   --residue_level
+python generate_seq_embedding.py --input_seq sample.fasta   -c /path/to/configfile.yaml   --checkpoint_path checkpoints/model.pth   --result_path ./out   --residue_level
 ```
 ---
 #### 💾 Output Format
