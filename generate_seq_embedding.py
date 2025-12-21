@@ -106,7 +106,66 @@ def run_one_pass(model: SequenceRepresentation,
         return out
 
 
-def main():
+def generate_seq_embedding(
+    query_sequence: Dict[str, str],
+    config_path: str,
+    checkpoint_path: str = None,
+    truncate_inference=None,
+    max_length_inference: int = None,
+    afterproject: bool = False,
+    residue_level: bool = False,
+) -> Dict[str, np.ndarray]:
+    """
+    Generate embeddings for a dict of sequences.
+
+    Parameters
+    ----------
+    query_sequence : Dict[str, str]
+        {protein_id -> amino_acid_sequence}
+    config_path : str
+        YAML config path.
+    checkpoint_path : str, optional
+        Model checkpoint (.pth).
+    truncate_inference : optional
+        If truthy ("1"/1/True), enable truncation.
+    max_length_inference : int, optional
+        Max sequence length used when truncation is enabled.
+    afterproject : bool
+        Keep for API compatibility. If your model exposes a post-projection output,
+        you should implement it inside `run_one_pass` or inside the model forward.
+    residue_level : bool
+        If True, return per-residue embeddings; else return per-protein embeddings.
+
+    Returns
+    -------
+    Dict[str, np.ndarray]
+        {protein_id -> embedding}
+        - residue_level=False: embedding shape (D,)
+        - residue_level=True : embedding shape (L, D)
+    """
+    model, batch_converter, device = build_model_and_converter(
+        config_path=config_path,
+        checkpoint_path=checkpoint_path,
+        truncate_inference=truncate_inference,
+        max_length_inference=max_length_inference,
+    )
+
+    result = {}
+    for pid, seq in query_sequence.items():
+        result[pid] = run_one_pass(
+            model=model,
+            batch_converter=batch_converter,
+            device=device,
+            prot_id=pid,
+            seq=seq,
+            residue_level=residue_level,
+            afterproject=afterproject,
+        )
+
+    return result
+
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Sequence embedding CLI using SequenceRepresentation backend")
     parser.add_argument("--input_seq", required=True, help="Path to FASTA file")
     parser.add_argument("--result_path", required=True, help="Output directory")
@@ -122,33 +181,26 @@ def main():
     Path(args.result_path).mkdir(parents=True, exist_ok=True)
     save_path = os.path.join(args.result_path, args.out_file)
 
-    # Build model and converter
-    model, batch_converter, device = build_model_and_converter(
+    # Read FASTA (id -> sequence)
+    prot2seq = read_fasta(args.input_seq)
+
+    # Generate embeddings using the unified function API
+    result = generate_seq_embedding(
+        query_sequence=prot2seq,
         config_path=args.config_path,
         checkpoint_path=args.checkpoint_path,
         truncate_inference=args.truncate_inference,
-        max_length_inference=args.max_length_inference
+        max_length_inference=args.max_length_inference,
+        afterproject=args.afterproject,
+        residue_level=args.residue_level,
     )
 
-    # Read FASTA
-    prot2seq = read_fasta(args.input_seq)
-
-    # Inference
-    result = {}
-    for pid, seq in prot2seq.items():
-        emb = run_one_pass(model, batch_converter, device, pid, seq,
-                           residue_level=args.residue_level,
-                           afterproject=args.afterproject)
-        result[pid] = emb
-
-    # Save results
+    # Save
     with open(save_path, "wb") as f:
         pickle.dump(result, f)
+
     print(f"Saved embeddings to {save_path}")
 
-
-if __name__ == "__main__":
-    main()
 
 """
 1. Basic usage
