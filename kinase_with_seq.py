@@ -12,8 +12,46 @@ from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
 from sklearn.metrics import calinski_harabasz_score, silhouette_score, adjusted_rand_score
 
-# MUST use this function (as requested)
 from generate_seq_embedding import generate_seq_embedding
+from Bio import SeqIO
+
+
+def read_kinase_fasta_allinfo(fn_fasta: str):
+    """
+    Read the 'all-columns-in-header' kinase FASTA.
+
+    Header example:
+      >KIN_00000001|Kinase_Entrez_Symbol=AAK1|Kinase_group=Other|...|Substrate_code=T
+      SEQUENCE (Kinase_seq)
+
+    Returns
+    -------
+    rows : list[dict]
+      Each row has keys:
+        - Kinase_Entrez_Symbol
+        - Kinase_group
+        - Kinase_seq
+      (Other columns are ignored by the ORIGINAL evaluation protocol.)
+    """
+    rows = []
+    with open(fn_fasta, "r") as handle:
+        for rec in SeqIO.parse(handle, "fasta"):
+            header = rec.description  # full header line without leading '>'
+            parts = header.split("|")
+
+            meta = {}
+            for token in parts[1:]:
+                if "=" in token:
+                    k, v = token.split("=", 1)
+                    # undo minimal escape if you used it when writing fasta
+                    meta[k.strip()] = v.strip().replace("%7C", "|")
+
+            rows.append({
+                "Kinase_Entrez_Symbol": meta.get("Kinase_Entrez_Symbol", ""),
+                "Kinase_group": meta.get("Kinase_group", ""),
+                "Kinase_seq": str(rec.seq),
+            })
+    return rows
 
 
 def scatter_labeled_z(
@@ -93,7 +131,7 @@ def scatter_labeled_z(
 def evaluate_with_kinase_original_protocol_using_generate(
     out_figure_path,
     steps,
-    kinasepath,
+    kinase_seq,
     config_path,
     checkpoint_path,
 ):
@@ -104,8 +142,8 @@ def evaluate_with_kinase_original_protocol_using_generate(
     Original protocol summary:
       1) Read TSV with pandas (sep='\\t')
       2) Drop duplicates by Kinase_Entrez_Symbol (keep first)
-      3) Filter rows by: Kinase_domain != ' '  (a single space)
-      4) labels = Kinase_group; sequences = Kinase_domain
+      3) Filter rows by: Kinase_seq != ' '  (a single space)
+      4) labels = Kinase_group; sequences = Kinase_seq
       5) Compute sequence embeddings (features_seq branch, i.e. afterproject=False)
       6) t-SNE (init='random', method='exact', random_state=0)
       7) Color mapping: fixed Kinase_group -> RGB tuple dict (ct)
@@ -123,14 +161,27 @@ def evaluate_with_kinase_original_protocol_using_generate(
     """
     Path(out_figure_path).mkdir(parents=True, exist_ok=True)
 
-    # --- Original: read TSV + deduplicate by Kinase_Entrez_Symbol ---
-    data_frame = pd.read_csv(kinasepath, sep="\t")
-    data_frame = data_frame.drop_duplicates(subset="Kinase_Entrez_Symbol", keep="first")
+    # --- Minimal change: read FASTA instead of TSV, but keep EXACT original semantics ---
+    rows = read_kinase_fasta_allinfo(kinase_seq)
 
-    # --- Original: filter only the literal single-space string ---
-    column_condition = data_frame["Kinase_domain"] != " "
-    labels = data_frame.loc[column_condition, "Kinase_group"].tolist()
-    seqs = data_frame.loc[column_condition, "Kinase_domain"].tolist()
+    # drop_duplicates(subset="Kinase_Entrez_Symbol", keep="first")
+    seen = set()
+    dedup_rows = []
+    for r in rows:
+        sym = r["Kinase_Entrez_Symbol"]
+        if sym in seen:
+            continue
+        seen.add(sym)
+        dedup_rows.append(r)
+
+    # filter: Kinase_seq != " " (a single space), EXACT same check
+    labels = []
+    seqs = []
+    for r in dedup_rows:
+        if r["Kinase_seq"] == " ":
+            continue
+        labels.append(r["Kinase_group"])
+        seqs.append(r["Kinase_seq"])
 
     # --- MUST use generate_seq_embedding: build query_sequence ---
     # NOTE: dict preserves insertion order in Python 3.7+, so the embedding order matches seqs order.
@@ -238,7 +289,7 @@ def main():
     )
     parser.add_argument("--checkpoint_path", type=str, required=True)
     parser.add_argument("--config_path", type=str, required=True)
-    parser.add_argument("--kinase_path", type=str, required=True)
+    parser.add_argument("--kinase_seq", type=str, required=True)
     parser.add_argument("--steps", type=int, default=0,
                         help="Used only for naming output: step_{steps}_kinase.png")
     args = parser.parse_args()
@@ -250,7 +301,7 @@ def main():
     scores = evaluate_with_kinase_original_protocol_using_generate(
         out_figure_path=out_figure_path,
         steps=args.steps,
-        kinasepath=args.kinase_path,
+        kinase_seq=args.kinase_seq,
         config_path=args.config_path,
         checkpoint_path=args.checkpoint_path,
     )

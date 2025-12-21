@@ -137,7 +137,25 @@ The output pickle file contains a Python dictionary:
 }
 ```
 Each value corresponds to either a protein level or residue level embedding depending on your arguments.
+
 ---
+
+## CATH/Kinase evaluation
+
+Evaluate sequence embedding clustering quality on **CATH** and **Kinase** datasets (.fa).  
+All scripts save **t-SNE figures** and a `scores.txt` summary under the output folder.
+
+```bash
+python cath_with_seq.py \
+  --checkpoint_path /path/to/checkpoint.pth \
+  --config_path /path/to/config.yaml \
+  --cath_seq ./dataset/Rep_subfamily_basedon_S40pdb.fa 
+
+python kinase_with_seq.py \
+  --checkpoint_path /path/to/checkpoint.pth \
+  --config_path /path/to/config.yaml \
+  --kinase_seq ./dataset/kinase_alllabels.fa 
+```
 
 ## S-PLM Pretraining
 
