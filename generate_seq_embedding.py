@@ -68,7 +68,7 @@ def build_model_and_converter(config_path: str,
     return model, batch_converter, device
 
 
-def run_one_pass(model: SequenceRepresentation,
+def embed_one_sequence(model: SequenceRepresentation,
                  batch_converter,
                  device: torch.device,
                  prot_id: str,
@@ -132,7 +132,7 @@ def generate_seq_embedding(
         Max sequence length used when truncation is enabled.
     afterproject : bool
         Keep for API compatibility. If your model exposes a post-projection output,
-        you should implement it inside `run_one_pass` or inside the model forward.
+        you should implement it inside `embed_one_sequence` or inside the model forward.
     residue_level : bool
         If True, return per-residue embeddings; else return per-protein embeddings.
 
@@ -152,7 +152,7 @@ def generate_seq_embedding(
 
     result = {}
     for pid, seq in query_sequence.items():
-        result[pid] = run_one_pass(
+        result[pid] = embed_one_sequence(
             model=model,
             batch_converter=batch_converter,
             device=device,
