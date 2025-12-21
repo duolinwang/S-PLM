@@ -174,11 +174,7 @@ def evaluate_with_cath_more_seq_aligned(
 
     # --- Build embeddings array (N, D) in insertion order ---
     vals = list(query_embedding_dic.values())
-    try:
-        seq_embeddings = np.concatenate(vals, axis=0)
-    except ValueError:
-        seq_embeddings = np.vstack([v.reshape(1, -1) for v in vals])
-
+    seq_embeddings = np.vstack([v.reshape(1, -1) for v in vals])
     seq_embeddings = np.asarray(seq_embeddings)
 
     # --- Original debug distance stats (first 50) ---
@@ -297,7 +293,7 @@ def main():
     parser = argparse.ArgumentParser(description="Evaluate sequence embeddings on CATH (aligned to original evaluate_with_cath_more).")
     parser.add_argument("--checkpoint_path", type=str, required=True)
     parser.add_argument("--config_path", type=str, required=True)
-    parser.add_argument("--input_seq", type=str, required=True, help="CATH fasta (headers like 1.10.10.2080|cath|...)")
+    parser.add_argument("--cath_seq", type=str, required=True, help="CATH fasta (headers like 1.10.10.2080|cath|...)")
 
     parser.add_argument("--truncate_inference", default=None, type=int, choices=[0, 1])
     parser.add_argument("--max_length_inference", default=None, type=int, nargs="?")
@@ -312,7 +308,7 @@ def main():
     scores = evaluate_with_cath_more_seq_aligned(
         out_figure_path=out_figure_path,
         steps=args.steps,
-        cath_fasta_path=args.input_seq,
+        cath_fasta_path=args.cath_seq,
         config_path=args.config_path,
         checkpoint_path=args.checkpoint_path,
         truncate_inference=args.truncate_inference,

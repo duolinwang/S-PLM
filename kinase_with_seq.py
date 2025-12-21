@@ -148,12 +148,7 @@ def evaluate_with_kinase_original_protocol_using_generate(
 
     # --- Build embeddings matrix (N, D) in insertion order ---
     vals = list(query_embedding_dic.values())
-    try:
-        seq_embeddings = np.concatenate(vals, axis=0)
-    except ValueError:
-        # Handle embeddings stored as (D,) arrays
-        seq_embeddings = np.vstack([v.reshape(1, -1) for v in vals])
-
+    seq_embeddings = np.vstack([v.reshape(1, -1) for v in vals])
     seq_embeddings = np.asarray(seq_embeddings)
 
     # --- Original: print pairwise distance stats for first 50 samples ---
