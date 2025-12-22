@@ -11,7 +11,7 @@ from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
 from sklearn.metrics import calinski_harabasz_score, silhouette_score, adjusted_rand_score
 
-from generate_seq_embedding import generate_seq_embedding
+from utils.generate_seq_embedding import generate_seq_embedding
 
 
 def scatter_labeled_z(
@@ -358,7 +358,7 @@ def main():
         )
 
     print(f"Scores written to {scores_file}")
-    print(f"Figures saved to {out_figure_path}/CATH_seqrep.png")
+    print(f"Figures saved to {out_figure_path}CATH_seqrep_1.png, {out_figure_path}CATH_seqrep_2.png, {out_figure_path}CATH_seqrep_3.png")
 
 
 if __name__ == "__main__":

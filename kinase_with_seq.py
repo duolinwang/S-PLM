@@ -3,7 +3,6 @@ import argparse
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 import torch
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
@@ -12,7 +11,7 @@ from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
 from sklearn.metrics import calinski_harabasz_score, silhouette_score, adjusted_rand_score
 
-from generate_seq_embedding import generate_seq_embedding
+from utils.generate_seq_embedding import generate_seq_embedding
 from Bio import SeqIO
 
 
