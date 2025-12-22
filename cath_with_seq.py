@@ -113,7 +113,6 @@ def read_cath_fasta_like_original(cath_fasta_path: str):
 
 def evaluate_with_cath_more_seq_aligned(
     out_figure_path: str,
-    steps: int,
     cath_fasta_path: str,
     config_path: str,
     checkpoint_path: str,
@@ -122,15 +121,7 @@ def evaluate_with_cath_more_seq_aligned(
     afterproject: bool = False,
 ):
     """
-    Sequence-side CATH clustering evaluation aligned to the ORIGINAL evaluate_with_cath_more() protocol,
-    with an added legend on the plot.
-
-    Returns
-    -------
-    scores : list[float]
-        [CH_full_1, CH_tsne_1, ARI_1, sil_1,
-         CH_full_2, CH_tsne_2, ARI_2, sil_2,
-         CH_full_3, CH_tsne_3, ARI_3, sil_3]
+    Sequence-side CATH representation with an added legend on the plot.
     """
     CATH_CLASS_NAME = {
         "1": "Mainly Alpha",
@@ -272,7 +263,7 @@ def evaluate_with_cath_more_seq_aligned(
         scatter_labeled_z(
             z_tsne_seq[select_index],
             color,
-            filename=os.path.join(out_figure_path, f"step_{steps}_CATH_{digit_num}.png"),
+            filename=os.path.join(out_figure_path, f"CATH_seqrep.png"),
             legend_labels=legend_labels,
             legend_title=legend_title,
         )
@@ -297,12 +288,11 @@ def main():
 
     parser.add_argument("--truncate_inference", default=None, type=int, choices=[0, 1])
     parser.add_argument("--max_length_inference", default=None, type=int, nargs="?")
-    parser.add_argument("--afterproject", action="store_true")
-    parser.add_argument("--steps", type=int, default=0)
+    parser.add_argument("--afterproject", action="store_true") 
+    parser.add_argument("--result_path", type=str, default="./")
     args = parser.parse_args()
 
-    base = os.path.splitext(args.config_path)[0]
-    out_figure_path = os.path.join(base, "CATH_test_release_seq")
+    out_figure_path = args.result_path
     Path(out_figure_path).mkdir(parents=True, exist_ok=True)
 
     scores = evaluate_with_cath_more_seq_aligned(
@@ -369,7 +359,7 @@ def main():
         )
 
     print(f"Scores written to {scores_file}")
-    print(f"Figures saved to {out_figure_path}")
+    print(f"Figures saved to {out_figure_path}/CATH_seqrep.png")
 
 
 if __name__ == "__main__":
