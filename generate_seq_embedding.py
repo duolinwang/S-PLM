@@ -81,29 +81,24 @@ def embed_one_sequence(model: SequenceRepresentation,
         _, _, batch_tokens = batch_converter(esm2_seq)
         batch_tokens = batch_tokens.to(device)
 
-        # In your first code version, forward returns protein_representation, residue_representation, mask
         protein_representation, residue_representation, mask = model(batch_tokens)
 
-        # In your second code version you had afterproject and residue_level flags
-        # Here we assume the returned representation already matches your desired stage
-        # If you have different projection stages inside the model, handle it there;
-        # here we just pick output granularity according to the flags
         if residue_level:
             out = residue_representation
         else:
             out = protein_representation
 
         out = out.detach().float().cpu().numpy()
-        # Remove batch dimension
-        if out.ndim > 2 and not residue_level:
-            # Common shape [B, D]; if [B, T, D], do pooling
-            out = out.mean(axis=1)
-        if residue_level and out.ndim == 3:
-            # [B, T, D] -> take B=0
-            out = out[0]
-        elif out.ndim == 2:
-            out = out[0]
-        return out
+
+        # ---- Normalize shapes ----
+        if not residue_level:
+            print(out.shape)
+            return out
+
+        else:
+            # residue-level: expect (B,L,D) or (L,D)
+            print(out.shape)
+            return out
 
 
 def generate_seq_embedding(
