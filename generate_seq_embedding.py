@@ -150,8 +150,7 @@ def generate_seq_embedding(
             device=device,
             prot_id=pid,
             seq=seq,
-            residue_level=residue_level,
-            afterproject=afterproject,
+            residue_level=residue_level
         )
 
     return result
