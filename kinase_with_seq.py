@@ -130,7 +130,6 @@ def scatter_labeled_z(
 
 def evaluate_with_kinase_original_protocol_using_generate(
     out_figure_path,
-    steps,
     kinase_seq,
     config_path,
     checkpoint_path,
@@ -152,7 +151,8 @@ def evaluate_with_kinase_original_protocol_using_generate(
          - Calinski-Harabasz on t-SNE 2D embeddings
          - KMeans on t-SNE (k = num classes) + ARI against true class ids
          - Silhouette on full embeddings
-      9) Save figure as: step_{steps}_kinase.png
+      9) Save figure as: kinase_group_rep.png
+
 
     Returns
     -------
@@ -263,7 +263,7 @@ def evaluate_with_kinase_original_protocol_using_generate(
     scatter_labeled_z(
         z_tsne_seq,
         color,
-        filename=os.path.join(out_figure_path, f"step_{steps}_kinase.png"),
+        filename=os.path.join(out_figure_path, f"kinase_group_rep.png"),
         legend_labels=legend_labels,
         legend_title="Kinase group",
     )
@@ -290,17 +290,14 @@ def main():
     parser.add_argument("--checkpoint_path", type=str, required=True)
     parser.add_argument("--config_path", type=str, required=True)
     parser.add_argument("--kinase_seq", type=str, required=True)
-    parser.add_argument("--steps", type=int, default=0,
-                        help="Used only for naming output: step_{steps}_kinase.png")
+    parser.add_argument("--result_path", type=str, required=True)
     args = parser.parse_args()
 
-    base = os.path.splitext(args.config_path)[0]
-    out_figure_path = os.path.join(base, "Kinase_test_release_seq")
+    out_figure_path = args.result_path
     Path(out_figure_path).mkdir(parents=True, exist_ok=True)
 
     scores = evaluate_with_kinase_original_protocol_using_generate(
         out_figure_path=out_figure_path,
-        steps=args.steps,
         kinase_seq=args.kinase_seq,
         config_path=args.config_path,
         checkpoint_path=args.checkpoint_path,
@@ -337,7 +334,7 @@ def main():
         f.write(f"  - {sil:.4f}\n")
 
     print(f"Scores written to {scores_file}")
-    print(f"Figure saved to {os.path.join(out_figure_path, f'step_{args.steps}_kinase.png')}")
+    print(f"Figure saved to {os.path.join(out_figure_path, f'kinase_group_rep.png')}")
 
 
 if __name__ == "__main__":
