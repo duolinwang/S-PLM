@@ -151,7 +151,7 @@ def evaluate_with_kinase_original_protocol_using_generate(
          - Calinski-Harabasz on t-SNE 2D embeddings
          - KMeans on t-SNE (k = num classes) + ARI against true class ids
          - Silhouette on full embeddings
-      9) Save figure as: kinase_group_rep.png
+      9) Save figure as: kinase_group_seqrep.png
 
 
     Returns
@@ -263,7 +263,7 @@ def evaluate_with_kinase_original_protocol_using_generate(
     scatter_labeled_z(
         z_tsne_seq,
         color,
-        filename=os.path.join(out_figure_path, f"kinase_group_rep.png"),
+        filename=os.path.join(out_figure_path, f"kinase_group_seqrep.png"),
         legend_labels=legend_labels,
         legend_title="Kinase group",
     )
@@ -290,7 +290,7 @@ def main():
     parser.add_argument("--checkpoint_path", type=str, required=True)
     parser.add_argument("--config_path", type=str, required=True)
     parser.add_argument("--kinase_seq", type=str, required=True)
-    parser.add_argument("--result_path", type=str, required=True)
+    parser.add_argument("--result_path", type=str, default="./")
     args = parser.parse_args()
 
     out_figure_path = args.result_path
@@ -334,7 +334,7 @@ def main():
         f.write(f"  - {sil:.4f}\n")
 
     print(f"Scores written to {scores_file}")
-    print(f"Figure saved to {os.path.join(out_figure_path, f'kinase_group_rep.png')}")
+    print(f"Figure saved to {os.path.join(out_figure_path, f'kinase_group_seqrep.png')}")
 
 
 if __name__ == "__main__":
