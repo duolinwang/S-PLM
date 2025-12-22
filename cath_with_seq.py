@@ -297,7 +297,6 @@ def main():
 
     scores = evaluate_with_cath_more_seq_aligned(
         out_figure_path=out_figure_path,
-        steps=args.steps,
         cath_fasta_path=args.cath_seq,
         config_path=args.config_path,
         checkpoint_path=args.checkpoint_path,
