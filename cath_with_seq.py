@@ -165,7 +165,7 @@ def evaluate_with_cath_more_seq_aligned(
 
     # --- Build embeddings array (N, D) in insertion order ---
     vals = list(query_embedding_dic.values())
-    seq_embeddings = np.vstack([v.reshape(1, -1) for v in vals])
+    seq_embeddings = np.concatenate(vals, axis=0)
     seq_embeddings = np.asarray(seq_embeddings)
 
     # --- Original debug distance stats (first 50) ---
@@ -263,7 +263,7 @@ def evaluate_with_cath_more_seq_aligned(
         scatter_labeled_z(
             z_tsne_seq[select_index],
             color,
-            filename=os.path.join(out_figure_path, f"CATH_seqrep.png"),
+            filename=os.path.join(out_figure_path, f"CATH_seqrep_{digit_num}.png"),
             legend_labels=legend_labels,
             legend_title=legend_title,
         )

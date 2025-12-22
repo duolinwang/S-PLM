@@ -73,8 +73,7 @@ def embed_one_sequence(model: SequenceRepresentation,
                  device: torch.device,
                  prot_id: str,
                  seq: str,
-                 residue_level: bool,
-                 afterproject: bool):
+                 residue_level: bool):
     # Assemble data as required by ESM: a list of (name, seq)
     esm2_seq = [(prot_id, seq)]
     with torch.inference_mode():
@@ -92,13 +91,11 @@ def embed_one_sequence(model: SequenceRepresentation,
 
         # ---- Normalize shapes ----
         if not residue_level:
-            print(out.shape)
             return out
 
         else:
-            # residue-level: expect (B,L,D) or (L,D)
-            print(out.shape)
-            return out
+            # residue-level:
+            return out.squeeze(0)
 
 
 def generate_seq_embedding(
