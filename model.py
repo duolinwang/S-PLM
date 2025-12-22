@@ -3,10 +3,10 @@ import yaml
 from torch import nn
 from torch.nn import functional as F
 from collections.abc import Sequence
-from transformers import EsmModel, T5Tokenizer, T5Model
+from transformers import EsmModel
 from transformers import BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
-from utils import load_configs, get_dummy_logging
+from utils.utils import load_configs, get_dummy_logging
 import esm_adapterH
 import esm
 import numpy as np

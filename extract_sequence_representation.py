@@ -1,5 +1,5 @@
 import yaml
-from utils import load_configs, load_checkpoints_only
+from utils.utils import load_configs, load_checkpoints_only
 from model import SequenceRepresentation
 
 

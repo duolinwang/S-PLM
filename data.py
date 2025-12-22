@@ -5,9 +5,9 @@ import pandas as pd
 import csv
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
-from utils import load_configs, calculate_class_weights
-from transformers import AutoTokenizer, T5Tokenizer
-from utils import truncate_seq
+from utils.utils import load_configs, calculate_class_weights
+from transformers import AutoTokenizer
+from utils.utils import truncate_seq
 
 
 def load_EC_seq_annot(file_seq, file_annot):
