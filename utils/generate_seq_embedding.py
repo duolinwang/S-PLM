@@ -10,7 +10,7 @@ from Bio import SeqIO
 import torch
 import numpy as np
 
-from utils.utils import load_configs, load_checkpoints_only
+from .utils import load_configs, load_checkpoints_only
 from model import SequenceRepresentation
 
 
