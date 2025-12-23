@@ -10,7 +10,7 @@ from tqdm import tqdm
 from data import prepare_dataloaders_enzyme_commission
 from focal_loss import FocalLoss
 from model import prepare_models
-from utils import load_configs, test_gpu_cuda, prepare_tensorboard, prepare_optimizer, save_checkpoint, \
+from utils.utils import load_configs, test_gpu_cuda, prepare_tensorboard, prepare_optimizer, save_checkpoint, \
     get_logging, load_checkpoints, prepare_saving_dir, f1_max
 
 

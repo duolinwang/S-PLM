@@ -13,7 +13,7 @@ from time import time, sleep
 from tqdm import tqdm
 print("start the codes2")
 
-from utils import load_configs, test_gpu_cuda, prepare_tensorboard, prepare_optimizer, save_checkpoint, \
+from utils.utils import load_configs, test_gpu_cuda, prepare_tensorboard, prepare_optimizer, save_checkpoint, \
     get_logging, load_checkpoints, prepare_saving_dir, Fmax_func, f1_max
 
 print("start the codes3")

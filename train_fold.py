@@ -6,7 +6,7 @@ import torch
 import torchmetrics
 from time import time, sleep
 from tqdm import tqdm
-from utils import load_configs, test_gpu_cuda, prepare_tensorboard, prepare_optimizer, save_checkpoint, \
+from utils.utils import load_configs, test_gpu_cuda, prepare_tensorboard, prepare_optimizer, save_checkpoint, \
     get_logging, load_checkpoints, prepare_saving_dir
 from data import prepare_dataloaders_fold
 from model import prepare_models
