@@ -10,8 +10,8 @@ Requires: ``fair-esm`` (see ``install.sh`` / ``environment.yaml`` in this repo).
 This script is **standalone**: logic matches SPLM-V2-GVP's ``esm2_baseline_cath_kinase.py``;
 only repo-specific paths in the docstring differ.
 
-Always runs **both** CATH and Kinase. Outputs go under ``{result_path}/cath/`` and
-``{result_path}/kinase/`` (default ``--result_path`` is ``./``).
+Always runs **both** CATH and Kinase. Outputs go under ``{result_path}/esm2_baseline_cath/`` and
+``{result_path}/esm2_baseline_kinase/`` (default ``--result_path`` is ``./``).
 
 Example
 -------
@@ -548,7 +548,7 @@ def main():
     parser = argparse.ArgumentParser(
         description=(
             "Run CATH then Kinase with plain fair-esm ESM2 t33 650M UR50D (no S-PLM checkpoint). "
-            "Writes result_path/cath/ and result_path/kinase/ (default result_path: ./)."
+            "Writes result_path/esm2_baseline_cath/ and result_path/esm2_baseline_kinase/ (default result_path: ./)."
         )
     )
     parser.add_argument("--cath_seq", type=str, required=True, help="CATH FASTA path")
@@ -557,7 +557,7 @@ def main():
         "--result_path",
         type=str,
         default="./",
-        help="Output root directory (default: ./). Subdirs cath/ and kinase/ are created.",
+        help="Output root directory (default: ./). Subdirs esm2_baseline_cath/ and esm2_baseline_kinase/ are created.",
     )
     parser.add_argument("--truncate_inference", type=int, default=None, choices=[0, 1])
     parser.add_argument("--max_length_inference", type=int, default=None)
@@ -567,8 +567,8 @@ def main():
 
     base = args.result_path
     Path(base).mkdir(parents=True, exist_ok=True)
-    cath_dir = os.path.join(base, "cath")
-    kinase_dir = os.path.join(base, "kinase")
+    cath_dir = os.path.join(base, "esm2_baseline_cath")
+    kinase_dir = os.path.join(base, "esm2_baseline_kinase")
 
     print("=== Running CATH (ESM2 baseline) ===")
     cath_scores, cath_title = run_cath_esm2(
