@@ -1,11 +1,13 @@
 ## S-PLM V1
 From paper: Wang, Duolin et al. “S-PLM: Structure-Aware Protein Language Model via Contrastive Learning Between Sequence and Structure.” Advanced science (Weinheim, Baden-Wurttemberg, Germany) vol. 12,5 (2025): e2404212. doi:10.1002/advs.202404212
 
-- **Pretrained model:** [Download from SharePoint](https://mailmissouri-my.sharepoint.com/:u:/g/personal/wangdu_umsystem_edu/EUf7oNxn1OpCse64KNleK3cBJ396ORTN338eRWRA4Q792A?e=Fgkuzk)
+- **Pretrained model:** [Download from SharePoint](https://mailmissouri-my.sharepoint.com/:u:/g/personal/wangdu_umsystem_edu/EUf7oNxn1OpCse64KNleK3cBJ396ORTN338eRWRA4Q792A?e=Fgkuzk),
+ or [Download from Google Drive](https://drive.google.com/drive/folders/1pK77hkot2Mu_RWvgjVcjkvpwL6qQakeZ?usp=sharing)
 ## S-PLM V2
 From paper: Zhang, Yichuan et al. "Enhancing Structure-aware Protein Language Models with Efficient Fine-tuning for Various Protein Prediction Tasks", bioRxiv, 2025.
 #### An updated residue level model。
-- **Pretrained Model:** [Download from SharePoint](https://mailmissouri-my.sharepoint.com/:u:/g/personal/wangdu_umsystem_edu/EUZ74fO3NOxHjTvc6uvKwDsB5fELaaw-oiPHFU9CJky_hg?e=4phwL0)
+- **Pretrained Model:** [Download from SharePoint](https://mailmissouri-my.sharepoint.com/:u:/g/personal/wangdu_umsystem_edu/EUZ74fO3NOxHjTvc6uvKwDsB5fELaaw-oiPHFU9CJky_hg?e=4phwL0),
+ or [Download from Google Drive](https://drive.google.com/drive/folders/1YiHcVUHudcn7XXaOlp1F5zE2TF0rcNpE?usp=share_link)
 
 #### Configuration
 **Important:** To use this model, you can use the same codes and configs for downstream tasks, except you must modify the num_end_adapter_layers parameter in the config files from the default value of 16 to 12, otherwise the pretrained model will fail to load.
